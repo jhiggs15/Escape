@@ -1,0 +1,13 @@
+Escape Board Checker
+--------------------
+in bounds
++ x infinite, y infinite
++ x finite, y infinite
++ x infinite, y finite
++ x finite, y finite
+
+out of bounds
++ x finite, y infinite
++ x infinite, y finite
++ x finite, y finite
+
