@@ -12,6 +12,9 @@
 package escape.util;
 
 import java.util.*;
+
+import escape.piece.EscapeGamePiece;
+import escape.piece.MoveManager;
 import escape.required.EscapePiece.*;
 
 /**
@@ -34,7 +37,13 @@ public class PieceTypeDescriptor
     
     public PieceTypeDescriptor() {}
 
-    // TODO : maybe make these methods public
+    public PieceTypeDescriptor(PieceName pieceName, MovementPattern movementPattern, PieceAttribute[] attributes) {
+        this.pieceName = pieceName;
+        this.movementPattern = movementPattern;
+        this.attributes = attributes;
+    }
+
+// TODO : maybe make these methods public
 
     /**
      * @return the pieceName
@@ -102,4 +111,20 @@ public class PieceTypeDescriptor
 		return "PieceTypeInitializer [pieceName=" + pieceName + ", movementPattern="
 		    + movementPattern + ", attributes=" + Arrays.toString(attributes) + "]";
 	}
+
+    @Override
+    public boolean equals(Object otherPiece)
+    {
+        if(this.getClass() != otherPiece.getClass()) return false;
+
+        PieceTypeDescriptor otherGamePiece = (PieceTypeDescriptor) otherPiece;
+
+        for(PieceAttribute otherAttribute : otherGamePiece.attributes)
+        {
+            boolean anyMatch = Arrays.stream(this.attributes).anyMatch(thisAttribute -> thisAttribute.equals(otherAttribute));
+            if(!anyMatch) return false;
+        }
+
+        return this.pieceName.equals(otherGamePiece.pieceName) && this.movementPattern.equals(otherGamePiece.movementPattern);
+    }
 }

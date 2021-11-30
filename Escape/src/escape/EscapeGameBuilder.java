@@ -110,6 +110,7 @@ public class EscapeGameBuilder
     public EscapeGameManager makeGameManager()
     {
 		// TODO : start here
+		EscapeGameManager gameManager = new GameManager(gameInitializer);
     	// >>> YOU MUST IMPLEMENT THIS METHOD<<<
     	return null;
     }

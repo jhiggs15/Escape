@@ -101,7 +101,8 @@ public class EscapeGameInitializer
 	 */
 	public LocationInitializer[] getLocationInitializers()
 	{
-		return locationInitializers;
+		if(locationInitializers != null) return locationInitializers;
+		else return new LocationInitializer[0];
 	}
 
 	/**
@@ -117,7 +118,8 @@ public class EscapeGameInitializer
 	 */
 	public PieceTypeDescriptor[] getPieceTypes()
 	{
-		return pieceTypes;
+		if(pieceTypes != null) return pieceTypes;
+		return new PieceTypeDescriptor[0];
 	}
 
 	/**

@@ -1,0 +1,8 @@
+Coordinate type : SQUARE
+xMax : 25
+yMax : 20
+
+Rules :
+	REMOVE
+	SCORE 10
+	TURN_LIMIT 20

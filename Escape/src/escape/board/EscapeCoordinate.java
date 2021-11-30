@@ -21,4 +21,13 @@ public class EscapeCoordinate implements Coordinate
     {
         return x;
     }
+
+    @Override
+    public int hashCode()
+    {
+        // taken from https://stackoverflow.com/questions/22826326/good-hashcode-function-for-2d-coordinates
+        // creates a bijection between (x,y) and the hash
+        int tmp = ( y +  ((x+1)/2));
+        return x +  ( tmp * tmp);
+    }
 }

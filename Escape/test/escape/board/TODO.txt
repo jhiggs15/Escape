@@ -11,3 +11,22 @@ out of bounds
 + x infinite, y finite
 + x finite, y finite
 
+
+Board
+-------------------
+Creating pieces
++ pieces from test1.egc are created correctly
++ game configuration with no pieces on the board is created correctly
+- both player has a piece with the same name
+
+
+Creating a board space
+
+
+Constructor
+- create board and verify that everything has been created
+    # pieces get created
+    # locations get created with pieces
+
+
+

@@ -31,11 +31,28 @@ public class PieceAttribute {
     int value;
     
     public PieceAttribute() {}
-    
-    public PieceAttributeID getId() { return id; }
+
+	public PieceAttribute(PieceAttributeID id, int value) {
+		this.id = id;
+		this.value = value;
+	}
+
+	public PieceAttribute(PieceAttributeID id) {
+		this.id = id;
+	}
+
+	public PieceAttributeID getId() { return id; }
     public void setId(PieceAttributeID id) { this.id = id; }
     public int getValue() { return value; }
     public void setValue(int intValue) { this.value = intValue; }
+
+	@Override
+	public boolean equals(Object otherPiece)
+	{
+		if(otherPiece.getClass() != this.getClass()) return false;
+		PieceAttribute otherGamePiece = (PieceAttribute) otherPiece;
+		return id == otherGamePiece.getId() && value == otherGamePiece.getValue();
+	}
 
 	/*
 	 * @see java.lang.Object#toString()

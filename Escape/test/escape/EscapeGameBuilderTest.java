@@ -26,7 +26,7 @@ class EscapeGameBuilderTest
 	@Test
 	void test() throws Exception
 	{
-		EscapeGameBuilder egb = new EscapeGameBuilder("config/egc/test1.egc");
+		EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/test1.egc");
 	}
 
 }
