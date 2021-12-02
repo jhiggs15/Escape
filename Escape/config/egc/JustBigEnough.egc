@@ -2,6 +2,12 @@ Coordinate type : SQUARE
 xMax : 3
 yMax : 3
 
+Locations :
+	(2, 2) player1 DOG
+
+Piece descriptors :
+	DOG omni [distance 1]
+
 Rules :
 	REMOVE
 	SCORE 10

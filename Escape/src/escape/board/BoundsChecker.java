@@ -17,7 +17,7 @@ public class BoundsChecker
         return withinBounds(coordinate.getX(), xMin, xMax) && withinBounds(coordinate.getY(), yMin, yMax);
     }
 
-    public boolean withinBounds(int value, int valueMin, int valueMax)
+    private boolean withinBounds(int value, int valueMin, int valueMax)
     {
         if(valueMax == 0) return true;
         return value >= valueMin && value <= valueMax;

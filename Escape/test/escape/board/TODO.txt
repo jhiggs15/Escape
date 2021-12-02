@@ -14,19 +14,28 @@ out of bounds
 
 Board
 -------------------
+
+Get piece
++ get one that exists
++ get one that does not exist because the space is null
++ get one that does not exist because there is no matching space
+
+Create new boardspace (bp)
++ create new board space with piece
++ create a new empty bp then add a piece to it
++ create a new bp and add two pieces to it both of differnt players
++ create a new bp and add two pieces to it both of the same player
+- create a new bp that is empty
+
 Creating pieces
 + pieces from test1.egc are created correctly
 + game configuration with no pieces on the board is created correctly
-- both player has a piece with the same name
++ both player have a piece with the same name
+
+Creating board spaces
++ spaces from test1.egc are created correctly
 
 
-Creating a board space
-
-
-Constructor
-- create board and verify that everything has been created
-    # pieces get created
-    # locations get created with pieces
 
 
 

@@ -27,7 +27,7 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
 
     public EscapeCoordinate makeCoordinate(int x, int y)
     {
-        return null;
+        return gameBoard.makeCoordinate(x, y);
     }
 
     public GameObserver addObserver(GameObserver observer)

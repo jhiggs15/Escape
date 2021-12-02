@@ -13,8 +13,6 @@ package escape.util;
 
 import java.util.*;
 
-import escape.piece.EscapeGamePiece;
-import escape.piece.MoveManager;
 import escape.required.EscapePiece.*;
 
 /**
@@ -45,6 +43,14 @@ public class PieceTypeDescriptor
 
 // TODO : maybe make these methods public
 
+
+    public int getMovementValue()
+    {
+        PieceAttribute distance = getAttribute(PieceAttributeID.DISTANCE);
+        if(distance != null) return distance.getValue();
+        return getAttribute(PieceAttributeID.FLY).getValue();
+
+    }
     /**
      * @return the pieceName
      */

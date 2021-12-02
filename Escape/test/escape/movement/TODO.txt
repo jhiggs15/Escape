@@ -1,0 +1,42 @@
+Move Manager
+-------------
+- move manager is created correctly for omni piece
+
+Move Checker
+-------------
+OMNI
+- piece trys to move within distance
+- piece trys to move farther than its attribute lets it
+- piece trys to move out of bounds
+
+MoveFinder
+------------
+-
+
+NeighborFinder
+---------------
+SQUARE/HEX
+
+findNeighbors
+    OMNI
++ unblocked check that it has all six directions and that all coordinate types work
+    +  0 0
+    + pos pos
+    + neg pos
+    + pos neg
+    + neg neg
++ get neighbors but some are out of bounds
++ get neighbors but all are out of bounds
++ get neighbors that are the boundary
+
+
+minimum distance
+    OMNI
++ 1 away
+    + all directions
++ 2 away
+    + all directions
++ 3 away
+    + all directions
+
+
