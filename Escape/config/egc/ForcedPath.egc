@@ -1,0 +1,36 @@
+Coordinate type : HEX
+xMax : 0
+yMax : 0
+
+Locations :
+	(-3, -2) clear player1 DOG
+	(-3, -1) clear player1 DOG
+	(-3, 0) clear player1 DOG
+	(-3, 1) clear player1 DOG
+	(-3, 2) clear player1 DOG
+	(-2, 2) clear player1 DOG
+	(-1, 2) clear player1 DOG
+	(0, 2) clear player1 DOG
+	(1, 2) clear player1 DOG
+	(1, 1) clear player1 DOG
+	(1, 0) clear player1 DOG
+	(2, 0) clear player1 DOG
+	(2, -1) clear player1 DOG
+	(2, -2) clear player1 DOG
+	(1, -2) clear player1 DOG
+	(0, -2) clear player1 DOG
+	(-1, -2) clear player1 DOG
+	(-2, -2) clear player1 DOG
+	(-1, -1) clear player1 DOG
+	(-1, 0) clear player1 DOG
+
+
+Piece descriptors :
+	DOG omni [distance 5]
+	BIRD omni [distance 20]
+	FROG omni [distance 3, unblock]
+
+Rules :
+	REMOVE
+	SCORE 10
+	TURN_LIMIT 20

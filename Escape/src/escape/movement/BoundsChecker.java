@@ -1,4 +1,6 @@
-package escape.board;
+package escape.movement;
+
+import escape.board.EscapeCoordinate;
 
 public class BoundsChecker
 {
@@ -12,7 +14,7 @@ public class BoundsChecker
         this.yMax = yMax;
     }
 
-    public boolean checkBounds(EscapeCoordinate coordinate)
+    public boolean isInBounds(EscapeCoordinate coordinate)
     {
         return withinBounds(coordinate.getX(), xMin, xMax) && withinBounds(coordinate.getY(), yMin, yMax);
     }

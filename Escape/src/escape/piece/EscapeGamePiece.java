@@ -12,29 +12,32 @@ public class EscapeGamePiece implements EscapePiece
 {
     private Player owner;
     private PieceTypeDescriptor descriptor;
-    private MoveManager moveManager;
 
     public EscapeGamePiece(PieceTypeDescriptor descriptor, Board board) {
         this.owner = null;
         this.descriptor = descriptor;
-        this.moveManager = new MoveManager(descriptor.getMovementPattern(), board);
     }
 
-    public EscapeGamePiece(Player owner, PieceTypeDescriptor descriptor, MoveManager moveManager)
+    public EscapeGamePiece(Player owner, PieceTypeDescriptor descriptor)
     {
         this.owner = owner;
         this.descriptor = descriptor;
-        this.moveManager = moveManager;
     }
 
-    public boolean canMove(EscapeCoordinate from, EscapeCoordinate to)
+
+    public MovementPattern getMovementPattern()
     {
-        return moveManager.canMove(from, to, descriptor.getMovementValue());
+        return descriptor.getMovementPattern();
+    }
+
+    public int getValue()
+    {
+        return descriptor.getMovementValue();
     }
 
     public EscapeGamePiece makeCopy(Player owner)
     {
-        return new EscapeGamePiece(owner, descriptor, moveManager);
+        return new EscapeGamePiece(owner, descriptor);
     }
 
     public Player getPlayer()
@@ -48,7 +51,6 @@ public class EscapeGamePiece implements EscapePiece
         EscapeGamePiece otherGamePiece = (EscapeGamePiece) otherPiece;
 
         return this.owner == otherGamePiece.getPlayer() &&
-                this.descriptor.equals(otherGamePiece.descriptor) &&
-                this.moveManager.equals(otherGamePiece.moveManager);
+                this.descriptor.equals(otherGamePiece.descriptor);
     }
 }

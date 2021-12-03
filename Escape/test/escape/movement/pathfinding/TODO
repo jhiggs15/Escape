@@ -1,0 +1,17 @@
+findPath
++ path of length 0
+    + hex
+    + square
++ path of length 1
+    + hex
+    + square
++ path of length 2
+    + hex
+    + square
++ no possible path
+    + hex
+    + square
++ forced path one possible path
+    + hex
+    +square
+

@@ -2,12 +2,14 @@ package escape.movement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
+import escape.required.Coordinate;
 import escape.required.EscapePiece;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class NeighborFinder
 {
@@ -15,11 +17,20 @@ public class NeighborFinder
 //    ArrayList<Neighbor> allDirections = Arrays.asList(Neighbor.TOP_LEFT);
 
     private NeighborSearch neighborSearch;
+    private static AllNeighborFinder allNeighborFinder;
     private Board board;
+    private BoundsChecker boundsChecker;
 
-    public NeighborFinder(EscapePiece.MovementPattern movementPattern, Board board)
+
+    public NeighborFinder(Coordinate.CoordinateType type, Board board, BoundsChecker boundsChecker)
     {
         this.board = board;
+        this.boundsChecker = boundsChecker;
+        allNeighborFinder = new AllNeighborFinder(type);
+    }
+
+    public void changeMovementPattern(EscapePiece.MovementPattern movementPattern)
+    {
         switch (movementPattern){
             case OMNI:
                 neighborSearch = OMNINeighborfinder;
@@ -32,7 +43,8 @@ public class NeighborFinder
 
     public int minimumDistance(EscapeCoordinate from, EscapeCoordinate to)
     {
-        if(getNeighbors(from).contains(to)) return 1;
+
+        if(from.equals(to)) return 0;
         else
         {
             int differnceOfX = Integer.compare(to.getX(), from.getX());
@@ -43,13 +55,20 @@ public class NeighborFinder
 
     public List<EscapeCoordinate> getNeighbors(EscapeCoordinate coordinate)
     {
+//        List<EscapeCoordinate> imNotCrazy = new ArrayList<>();
+//        neighborSearch.findNeighbors(coordinate).forEach(neighbor -> {
+//            if(boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor))
+//                imNotCrazy.add(neighbor);
+//        });
+//
+//        List<EscapeCoordinate> stream = neighborSearch.findNeighbors(coordinate).stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor)).collect(Collectors.toList());
         return neighborSearch.findNeighbors(coordinate)
-                .stream().filter(neighbor -> board.isInBounds(neighbor) && board.isAccessible(neighbor))
+                .stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor))
                 .collect(Collectors.toList());
     }
 
     public static NeighborSearch OMNINeighborfinder = (EscapeCoordinate coordinate)
-            -> allNeighbors(coordinate);
+            -> allNeighborFinder.findAllNeighbors(coordinate);
 
 
 //     will be used for other patterns
@@ -60,23 +79,11 @@ public class NeighborFinder
 //    }
 
     private static List<EscapeCoordinate> selectNeighbors(EscapeCoordinate coordinate, Neighbor... neighborTypes){
-        List<EscapeCoordinate> neighbors = allNeighbors(coordinate);
+        List<EscapeCoordinate> neighbors = allNeighborFinder.findAllNeighbors(coordinate);
         return Arrays.stream(neighborTypes).map(neighborType -> neighbors.get(neighborType.ordinal())).collect(Collectors.toList());
     }
 
-    private static List<EscapeCoordinate> allNeighbors(EscapeCoordinate coordinate)
-    {
-        ArrayList<EscapeCoordinate> allNeighbors = new ArrayList<>();
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() - 1, coordinate.getY() + 1));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX(), coordinate.getY() + 1));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() + 1, coordinate.getY() + 1));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() - 1, coordinate.getY()));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() + 1, coordinate.getY()));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() - 1, coordinate.getY() - 1));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX(), coordinate.getY() - 1));
-        allNeighbors.add(new EscapeCoordinate(coordinate.getX() + 1, coordinate.getY() - 1));
-        return allNeighbors;
-    }
+
 
 
 }

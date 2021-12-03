@@ -15,10 +15,9 @@ MoveFinder
 
 NeighborFinder
 ---------------
-SQUARE/HEX
 
 findNeighbors
-    OMNI
+    OMNI - SQUARE
 + unblocked check that it has all six directions and that all coordinate types work
     +  0 0
     + pos pos
@@ -29,9 +28,13 @@ findNeighbors
 + get neighbors but all are out of bounds
 + get neighbors that are the boundary
 
+    OMNI - HEX
+
+
 
 minimum distance
     OMNI
++ 0 away
 + 1 away
     + all directions
 + 2 away
