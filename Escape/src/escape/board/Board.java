@@ -16,6 +16,8 @@ import escape.util.PieceTypeDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Board {
 
@@ -103,9 +105,9 @@ public class Board {
             int pieceValue = getPieceAt(from).getMovementValue();
             if(pathSize > pieceValue) throw new NoPathExists(from, to, pathSize, pieceValue);
 
-            executeMove(from, path);
+            EscapeCoordinate destination = executeMove(from, path);
 
-            Score score = findScore(player, to);
+            Score score = findScore(player, destination);
             return score;
 
         }
@@ -114,18 +116,31 @@ public class Board {
 
     }
 
-    private void executeMove(EscapeCoordinate from, List<EscapeCoordinate> path)
+    private EscapeCoordinate executeMove(EscapeCoordinate from, List<EscapeCoordinate> path)
     {
         EscapeGamePiece pieceToMove = board.get(from).removePiece();
         EscapeCoordinate destination = path.get(path.size() - 1);
+        List<EscapeCoordinate> possibleNewDestination =
+                path.stream()
+                        .filter(coordinate -> exitSpaces.containsKey(coordinate))
+                        .collect(Collectors.toList());
+        if(possibleNewDestination.size() >= 1)
+            destination = possibleNewDestination.get(0);
         createBoardSpace(destination, LocationType.CLEAR, pieceToMove);
+
+        return destination;
     }
 
     private Score findScore(Player player, EscapeCoordinate to)
     {
         Score score = new Score(player);
+
         if(exitSpaces.containsKey(to))
-            score.incrementPlayerScore(board.get(to).removePiece());
+        {
+            EscapeGamePiece removedPiece = board.get(to).removePiece();
+            score.incrementPlayerScore(removedPiece);
+            piecesOnTheBoard.remove(removedPiece);
+        }
 
         return score;
     }

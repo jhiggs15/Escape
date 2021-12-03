@@ -48,6 +48,8 @@ move
 + path found is larger than the pieces value (throws error)
 + normal move
 + piece reaches the end and scores
++ only path is through an exit
+    correctly removes such a piece and counts it toward score
 
 
 

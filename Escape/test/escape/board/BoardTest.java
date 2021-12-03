@@ -2,10 +2,7 @@ package escape.board;
 
 import escape.EscapeGameBuilder;
 import escape.Score;
-import escape.exception.MoveTooFar;
-import escape.exception.NoPathExists;
-import escape.exception.OutOfBoundsException;
-import escape.exception.SpaceMissingPiece;
+import escape.exception.*;
 import escape.piece.EscapeGamePiece;
 import escape.movement.MoveManager;
 import escape.required.EscapePiece;
@@ -331,6 +328,13 @@ public class BoardTest
         assertTrue(board.canMove(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(13, 13)));
     }
 
+    @Test
+    void canMove_toAndFromAreTheSame() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/PlayersHaveSamePiece.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(PieceHasNotMoved.class, () -> board.canMove(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(10, 12)));
+    }
+
 
     // ----- move
 
@@ -384,6 +388,29 @@ public class BoardTest
         assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(5, 12)));
         assertNull(board.getPieceAt(new EscapeCoordinate(10, 12)));
+    }
+
+    @Test
+    void move_onlyPathThroughExit() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/OnlyPathIsThroughExit.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+
+        EscapeGamePiece dog = makePiece(
+                Player.PLAYER2,
+                EscapePiece.PieceName.DOG,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 3)}
+        );
+
+        Score score = new Score(Player.PLAYER2);
+        score.incrementPlayerScore(dog);
+
+        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-1, 1)), score);
+        assertNull(board.getPieceAt(new EscapeCoordinate(-2, -1)));
+        assertNull(board.getPieceAt(new EscapeCoordinate(-1, 1)));
     }
 
 

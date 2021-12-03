@@ -1,8 +1,10 @@
 package escape;
 
 import escape.board.EscapeCoordinate;
+import escape.exception.EscapeException;
 import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
+import escape.required.GameObserver;
 import escape.required.Player;
 import escape.util.PieceAttribute;
 import escape.util.PieceTypeDescriptor;
@@ -219,6 +221,33 @@ public class GameMangerTest
     }
 
     @Test
+    void move_PlayerMovesAfterGameIsOver() throws Exception
+    {
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
+        GameManager myGm = (GameManager) gm;
+
+        assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+        assertTrue(gm.move(new EscapeCoordinate(1, 0), new EscapeCoordinate(2, 1)));
+
+        assertTrue(gm.move(new EscapeCoordinate(2, 2), new EscapeCoordinate(3, 3)));
+        assertTrue(gm.move(new EscapeCoordinate(2, 1), new EscapeCoordinate(3, 2)));
+
+        assertTrue(gm.move(new EscapeCoordinate(3, 3), new EscapeCoordinate(4, 4)));
+
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
+
+        assertEquals("Game Over", outContent.toString());
+        System.setOut(originalOut);
+
+        assertFalse(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
+
+    }
+
+    @Test
     void move_turnLimitReachedPlayer1Wins() throws Exception
     {
         EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
@@ -380,6 +409,22 @@ public class GameMangerTest
         System.setOut(originalOut);
 
     }
+
+
+    // ---- observer tests
+
+    @Test
+    void observerTest() throws Exception
+    {
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc");
+        GameObserver gmob = new EscapeGameObsever();
+        assertThrows(EscapeException.class,() -> gmob.notify("hello world"));
+        assertThrows(EscapeException.class,() -> gmob.notify("hello world", new EscapeException("hello", new Throwable())));
+        assertThrows(EscapeException.class, () -> gm.addObserver(new EscapeGameObsever()));
+        assertThrows(EscapeException.class, () -> gm.removeObserver(new EscapeGameObsever()));
+    }
+
+
 
 
 

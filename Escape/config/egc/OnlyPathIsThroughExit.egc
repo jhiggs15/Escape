@@ -1,0 +1,37 @@
+Coordinate type : HEX
+xMax : 0
+yMax : 0
+
+Locations :
+	(-3, -2) clear player1 DOG
+	(-3, -1) clear player1 DOG
+	(-3, 0) clear player1 DOG
+	(-3, 1) clear player1 DOG
+	(-3, 2) clear player1 DOG
+	(-2, 2) clear player1 DOG
+	(-1, 2) clear player1 DOG
+	(0, 2) clear player1 DOG
+	(1, 2) clear player1 DOG
+	(1, 1) clear player1 DOG
+	(1, 0) clear player1 DOG
+	(2, 0) clear player1 DOG
+	(2, -1) clear player1 DOG
+	(2, -2) clear player1 DOG
+	(1, -2) clear player1 DOG
+	(0, -2) clear player1 DOG
+	(-1, -2) clear player1 DOG
+	(-2, -2) clear player1 DOG
+	(-1, -1) clear player1 DOG
+	(-1, 0) clear player1 DOG
+
+    (-2, -1) clear PLAYER2 DOG
+    (-2, 0) exit
+
+
+Piece descriptors :
+	DOG omni [distance 3]
+
+Rules :
+	REMOVE
+	SCORE 10
+	TURN_LIMIT 20

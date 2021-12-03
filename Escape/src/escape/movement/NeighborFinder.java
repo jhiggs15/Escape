@@ -42,7 +42,6 @@ public class NeighborFinder
 
     public int minimumDistance(EscapeCoordinate from, EscapeCoordinate to)
     {
-
         if(from.equals(to)) return 0;
         else
         {
@@ -54,13 +53,6 @@ public class NeighborFinder
 
     public List<EscapeCoordinate> getNeighbors(EscapeCoordinate coordinate)
     {
-//        List<EscapeCoordinate> imNotCrazy = new ArrayList<>();
-//        neighborSearch.findNeighbors(coordinate).forEach(neighbor -> {
-//            if(boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor))
-//                imNotCrazy.add(neighbor);
-//        });
-//
-//        List<EscapeCoordinate> stream = neighborSearch.findNeighbors(coordinate).stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor)).collect(Collectors.toList());
         return neighborSearch.findNeighbors(coordinate)
                 .stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor))
                 .collect(Collectors.toList());

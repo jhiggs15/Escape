@@ -47,8 +47,9 @@ public class PieceTypeDescriptor
     public int getMovementValue()
     {
         PieceAttribute distance = getAttribute(PieceAttributeID.DISTANCE);
-        if(distance != null) return distance.getValue();
-        return getAttribute(PieceAttributeID.FLY).getValue();
+        return distance.getValue();
+//        if(distance != null) return distance.getValue();
+//        return getAttribute(PieceAttributeID.FLY).getValue();
 
     }
 
@@ -119,12 +120,12 @@ public class PieceTypeDescriptor
 	/*
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
-	public String toString()
-	{
-		return "PieceTypeInitializer [pieceName=" + pieceName + ", movementPattern="
-		    + movementPattern + ", attributes=" + Arrays.toString(attributes) + "]";
-	}
+//	@Override
+//	public String toString()
+//	{
+//		return "PieceTypeInitializer [pieceName=" + pieceName + ", movementPattern="
+//		    + movementPattern + ", attributes=" + Arrays.toString(attributes) + "]";
+//	}
 
     @Override
     public boolean equals(Object otherPiece)

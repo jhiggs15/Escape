@@ -14,21 +14,23 @@ public class PathFindingFactory
 
     public PathFinding makePathFinder(EscapePiece.MovementPattern movementPattern)
     {
-        switch (movementPattern)
-        {
-            case OMNI:
-                return makeOMNIPathFinding();
-            case SKEW:
-                return null;
-            case LINEAR:
-                return null;
-            case DIAGONAL:
-                return null;
-            case ORTHOGONAL:
-                return null;
-            default:
-                return null;
-        }
+        return makeOMNIPathFinding();
+
+//        switch (movementPattern)
+//        {
+//            case OMNI:
+//                return makeOMNIPathFinding();
+//            case SKEW:
+//                return null;
+//            case LINEAR:
+//                return null;
+//            case DIAGONAL:
+//                return null;
+//            case ORTHOGONAL:
+//                return null;
+//            default:
+//                return null;
+//        }
     }
 
     private PathFinding makeOMNIPathFinding()

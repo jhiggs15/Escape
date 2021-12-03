@@ -57,9 +57,9 @@ public class PieceAttribute {
 	/*
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
-	public String toString()
-	{
-		return "PieceAttribute [id=" + id + ", value=" + value + "]";
-	}
+//	@Override
+//	public String toString()
+//	{
+//		return "PieceAttribute [id=" + id + ", value=" + value + "]";
+//	}
 }

@@ -2,9 +2,7 @@ package escape.movement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
-import escape.exception.MoveTooFar;
-import escape.exception.OutOfBoundsException;
-import escape.exception.SpaceMissingPiece;
+import escape.exception.*;
 import escape.movement.pathfinding.PathFinding;
 import escape.movement.pathfinding.PathFindingFactory;
 import escape.piece.EscapeGamePiece;
@@ -39,6 +37,10 @@ public class MoveManager
 
     public boolean canMove(Player player, EscapeCoordinate from, EscapeCoordinate to)
     {
+        // ensure from and to are differnt
+
+        if(from.equals(to)) throw new PieceHasNotMoved(from);
+
         // ensure source or destination is in of bounds
         if(!isInBounds(from)) throw new OutOfBoundsException(from);
         if(!isInBounds(to)) throw new OutOfBoundsException(to);
