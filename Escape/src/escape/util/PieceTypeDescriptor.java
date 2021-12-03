@@ -51,6 +51,14 @@ public class PieceTypeDescriptor
         return getAttribute(PieceAttributeID.FLY).getValue();
 
     }
+
+    public int getValue()
+    {
+        PieceAttribute value = getAttribute(PieceAttributeID.VALUE);
+        if(value == null) return 1;
+        return value.getValue();
+
+    }
     /**
      * @return the pieceName
      */

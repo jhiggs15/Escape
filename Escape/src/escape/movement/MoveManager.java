@@ -51,7 +51,7 @@ public class MoveManager
         if(!piece.getPlayer().equals(player)) throw new SpaceMissingPiece(player, from);
 
         // ensure the piece that exists at the given space can travel far enough to reach the destination
-        int value = piece.getValue();
+        int value = piece.getMovementValue();
         EscapePiece.MovementPattern movementPattern = piece.getMovementPattern();
         neighborFinder.changeMovementPattern(movementPattern);
         pathFinding = pathFindingFactory.makePathFinder(movementPattern);

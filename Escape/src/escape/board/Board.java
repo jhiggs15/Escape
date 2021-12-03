@@ -100,7 +100,7 @@ public class Board {
             if(pathSize == 0 && !from.equals(to)) throw new NoPathExists(from, to);
 
             // the shortest path is larger than the possible spaces the piece can move
-            int pieceValue = getPieceAt(from).getValue();
+            int pieceValue = getPieceAt(from).getMovementValue();
             if(pathSize > pieceValue) throw new NoPathExists(from, to, pathSize, pieceValue);
 
             executeMove(from, path);

@@ -8,27 +8,24 @@ import java.util.List;
 
 public class ScoreManager
 {
-    private int player1Score = 0;
-    private int player2Score = 0;
+    private Score player1Score = new Score(Player.PLAYER1);
+    private Score player2Score = new Score(Player.PLAYER2);
 
-    List<EscapeGamePiece> player1ScoredPieces = new ArrayList<>();
-    List<EscapeGamePiece> player2ScoredPieces = new ArrayList<>();
 
     public void addScore(Score score)
     {
-        int playerScore = score.getPlayerScore();
-        List<EscapeGamePiece> gamePieces = score.getPlayerScoredGamePieces();
-
         if(isPlayer1(score.getPlayer()))
-        {
-            player1Score += playerScore;
-            player1ScoredPieces.addAll(gamePieces);
-        }
+            player1Score.combineScores(score);
         else
-        {
-            player2Score += playerScore;
-            player2ScoredPieces.addAll(gamePieces);
-        }
+            player2Score.combineScores(score);
+    }
+
+    public int getPlayerScore(Player player)
+    {
+        if(isPlayer1(player))
+            return player1Score.getPlayerScore();
+        else
+            return player2Score.getPlayerScore();
     }
 
     private boolean isPlayer1(Player player)

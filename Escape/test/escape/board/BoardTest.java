@@ -304,14 +304,6 @@ public class BoardTest
     }
 
     @Test
-    void canMove_noPieceCanMove() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoNeighbors.egc");
-        Board board = new Board(egb.getGameInitializer());
-        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
-        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
-    }
-
-    @Test
     void canMove_noPieceAtLocation() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPiecesInfinite.egc");
         Board board = new Board(egb.getGameInitializer());
@@ -377,8 +369,8 @@ public class BoardTest
     void move_PieceReachesTheEnd() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/test1.egc");
         Board board = new Board(egb.getGameInitializer());
-        EscapeGamePiece dog = makePiece(
-                Player.PLAYER1,
+        EscapeGamePiece horse = makePiece(
+                Player.PLAYER2,
                 EscapePiece.PieceName.HORSE,
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
@@ -388,7 +380,7 @@ public class BoardTest
         );
 
         Score score = new Score(Player.PLAYER2);
-        score.incrementPlayerScore(dog);
+        score.incrementPlayerScore(horse);
         assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(5, 12)));
         assertNull(board.getPieceAt(new EscapeCoordinate(10, 12)));

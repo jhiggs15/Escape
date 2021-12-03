@@ -1,3 +1,29 @@
 Game Manager
 -------------
--
+move
++ cannot move from a space that is out of bounds
+    returns false and it is still Player1s turn
++ cannot move to a space that is out of bounds (throw error)
+    returns false and it is still Player1s turn
++ cannot move if there is no piece (throw error)
+    returns false and it is still Player1s turn
++ cannot move if the player whos turn it is does not own the piece at the start
+        returns false and it is still Player1s turn
++ cannot move if the piece cannot travel far enough
+    returns false and it is still Player1s turn
++ piece can move
+    returns true, check to make sure piece has moved, check to make
+    sure it is now player 2's turn
++ no path could be found
+    returns false and it is still Player1s turn
++ path found is larger than the pieces value (throws error)
++ player play multiple consecutive turns
++ piece reaches the end and scores
++ players go back and forth until a turn limit is reached and someone wins
+    + Player 1 wins
+    + Player 2 wins
++ players go back and forth until a turn limit is reached and nobody wins
++ players go back and forth until a score limit is reached
++ score limit and turn limit are in effect, score limit is reached first
++ score limit and turn limit are in effect, turn limit is reached first
++ both are reached and turn limit are in effect, score limit is reached first

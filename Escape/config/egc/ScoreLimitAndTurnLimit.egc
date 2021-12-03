@@ -1,0 +1,18 @@
+Coordinate type : SQUARE
+xMax : 0
+yMax : 0
+
+Locations :
+	(5, 5) exit
+    (1, 1) player1 SNAIL
+    (1, 0) player2 SNAIL
+    (1, -1) player1 SNAIL
+    (1, -2) player2 SNAIL
+
+
+Piece descriptors :
+	SNAIL omni [distance 6]
+
+Rules :
+	SCORE 2
+	TURN_LIMIT 3

@@ -37,14 +37,16 @@ public class Score
         return playerScore;
     }
 
-    public List<EscapeGamePiece> getPlayerScoredGamePieces()
+    public void combineScores(Score score)
     {
-        return playerScoredGamePieces;
+        playerScore += score.playerScore;
+        playerScoredGamePieces.addAll(score.playerScoredGamePieces);
     }
 
     public void incrementPlayerScore(EscapeGamePiece piece)
     {
         playerScore += piece.getValue();
+        playerScoredGamePieces.add(piece);
     }
 
 }

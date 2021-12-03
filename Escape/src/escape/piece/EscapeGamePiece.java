@@ -30,9 +30,14 @@ public class EscapeGamePiece implements EscapePiece
         return descriptor.getMovementPattern();
     }
 
-    public int getValue()
+    public int getMovementValue()
     {
         return descriptor.getMovementValue();
+    }
+
+    public int getValue()
+    {
+        return descriptor.getValue();
     }
 
     public EscapeGamePiece makeCopy(Player owner)
