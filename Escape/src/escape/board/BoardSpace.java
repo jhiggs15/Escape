@@ -26,13 +26,15 @@ public class BoardSpace
     }
 
 
-    public EscapeGamePiece removePiece(){ return null; }
-    public EscapeGamePiece removePiece(EscapeGamePiece piece){ return null; }
+    public EscapeGamePiece removePiece()
+    {
+        return pieces.remove(0);
+    }
+//    public EscapeGamePiece removePiece(EscapeGamePiece piece){ return null; }
     public void addPiece(EscapeGamePiece piece)
     {
         if(piece != null) pieces.add(piece);
     }
-    public boolean isEmpty() {return false; }
 
     public EscapeGamePiece getPiece(){
         if(!pieces.isEmpty()) return pieces.get(0);

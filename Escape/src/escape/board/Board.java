@@ -1,10 +1,14 @@
 package escape.board;
 
+import escape.Score;
+import escape.exception.NoPathExists;
+import escape.exception.OutOfBoundsException;
 import escape.movement.BoundsChecker;
 import escape.movement.MoveManager;
 import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
+import escape.required.Player;
 import escape.util.EscapeGameInitializer;
 import escape.util.LocationInitializer;
 import escape.util.PieceTypeDescriptor;
@@ -18,6 +22,7 @@ public class Board {
     private HashMap<EscapeCoordinate, BoardSpace> board = new HashMap<>();
     private MoveManager moveManager;
     private List<EscapeGamePiece> piecesOnTheBoard = new ArrayList<>();
+    private HashMap<EscapeCoordinate, BoardSpace> exitSpaces = new HashMap<>();
 
 
     public Board(EscapeGameInitializer gameInitializer)
@@ -52,10 +57,15 @@ public class Board {
             board.get(coordinate).addPiece(piece);
 
         else
+        {
+            BoardSpace boardSpace = new BoardSpace(piece, locationType);
+            if(locationType != null && locationType.equals(LocationType.EXIT)) exitSpaces.put(coordinate, boardSpace);
             board.put(
                     coordinate,
-                    new BoardSpace(piece, locationType)
+                    boardSpace
             );
+        }
+
 
 
     }
@@ -80,15 +90,51 @@ public class Board {
         return piecesOnTheBoard;
     }
 
-    public boolean move(EscapeCoordinate from, EscapeCoordinate to)
+    public Score move(Player player, EscapeCoordinate from, EscapeCoordinate to)
     {
-        return false;
+        if(canMove(player, from, to))
+        {
+            // no path exists
+            List<EscapeCoordinate> path = moveManager.findPath(from, to);
+            int pathSize = path.size();
+            if(pathSize == 0 && !from.equals(to)) throw new NoPathExists(from, to);
+
+            // the shortest path is larger than the possible spaces the piece can move
+            int pieceValue = getPieceAt(from).getValue();
+            if(pathSize > pieceValue) throw new NoPathExists(from, to, pathSize, pieceValue);
+
+            executeMove(from, path);
+
+            Score score = findScore(player, to);
+            return score;
+
+        }
+
+        return null;
+
     }
 
-    public boolean canMove(EscapeCoordinate from, EscapeCoordinate to)
+    private void executeMove(EscapeCoordinate from, List<EscapeCoordinate> path)
     {
-        return moveManager.canMove(from, to);
+        EscapeGamePiece pieceToMove = board.get(from).removePiece();
+        EscapeCoordinate destination = path.get(path.size() - 1);
+        createBoardSpace(destination, LocationType.CLEAR, pieceToMove);
     }
+
+    private Score findScore(Player player, EscapeCoordinate to)
+    {
+        Score score = new Score(player);
+        if(exitSpaces.containsKey(to))
+            score.incrementPlayerScore(board.get(to).removePiece());
+
+        return score;
+    }
+
+    public boolean canMove(Player player, EscapeCoordinate from, EscapeCoordinate to)
+    {
+        return moveManager.canMove(player, from, to);
+    }
+
 
     public EscapeCoordinate makeCoordinate(int x, int y)
     {
@@ -99,7 +145,6 @@ public class Board {
     {
         return board.get(coordinate) != null;
     }
-
 
     public boolean isAccessible(EscapeCoordinate coordinate)
     {

@@ -40,4 +40,8 @@ public class EscapeCoordinate implements Coordinate
         return Objects.hash(x, y);
     }
 
+    @Override
+    public String toString() {
+        return  x + ", " + y;
+    }
 }

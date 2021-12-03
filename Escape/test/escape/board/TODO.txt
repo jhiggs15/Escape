@@ -35,6 +35,21 @@ Creating pieces
 Creating board spaces
 + spaces from test1.egc are created correctly
 
+canMove
++ cannot move from a space that is out of bounds (throw error)
++ cannot move to a space that is out of bounds (throw error)
++ cannot move if there is no piece (throw error)
++ cannot move if the player whos turn it is does not own the piece at the start
++ cannot move if the piece cannot travel far enough
++ piece can move
+
+move
++ no path could be found (throws error)
++ path found is larger than the pieces value (throws error)
++ normal move
++ piece reaches the end and scores
+
+
 
 
 

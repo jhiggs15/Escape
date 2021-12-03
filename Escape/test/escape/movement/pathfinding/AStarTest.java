@@ -5,10 +5,8 @@ import escape.board.Board;
 import escape.board.EscapeCoordinate;
 import escape.movement.BoundsChecker;
 import escape.movement.NeighborFinder;
-import escape.piece.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
-import escape.required.Player;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +36,7 @@ public class AStarTest
     void validatePath(String name, String filename, EscapeCoordinate from, EscapeCoordinate to, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType, int lengthOfPath, List<EscapeCoordinate> path) throws Exception {
         NeighborFinder neighborFinder = initializeNeighborFinder(filename, movementPattern, coordinateType);
         AStar aStar = new AStar(neighborFinder);
-        List<EscapeCoordinate> generatedPath = aStar.getPath(from, to);
+        List<EscapeCoordinate> generatedPath = aStar.findPath(from, to);
         assertTrue(generatedPath.isEmpty() || generatedPath.get(generatedPath.size() - 1).equals(to));
         assertEquals(generatedPath.size(), lengthOfPath);
         if(path != null)
@@ -97,7 +95,7 @@ public class AStarTest
                                 Coordinate.CoordinateType.SQUARE,
                                 2, null),
                         Arguments.arguments("No Possible Path SQUARE",
-                                "Escape/config/egc/NoPossiblePath.egc",
+                                "Escape/config/egc/TheBox.egc",
                                 new EscapeCoordinate(2, 2),
                                 new EscapeCoordinate(1, -1),
                                 EscapePiece.MovementPattern.OMNI,
@@ -105,7 +103,7 @@ public class AStarTest
                                 0,
                                 null),
                         Arguments.arguments("No Possible Path SQUARE",
-                                "Escape/config/egc/NoPossiblePath.egc",
+                                "Escape/config/egc/TheBox.egc",
                                 new EscapeCoordinate(2, 2),
                                 new EscapeCoordinate(1, -1),
                                 EscapePiece.MovementPattern.OMNI,

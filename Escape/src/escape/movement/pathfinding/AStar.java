@@ -6,7 +6,7 @@ import escape.movement.NeighborFinder;
 
 import java.util.*;
 
-public class AStar
+public class AStar implements PathFinding
 {
     private PriorityQueue<CostPair> coordinates = new PriorityQueue<>();
 
@@ -30,7 +30,7 @@ public class AStar
         return coordinates.poll().getItem();
     }
 
-    List<EscapeCoordinate> getPath(EscapeCoordinate from, EscapeCoordinate to)
+    public List<EscapeCoordinate> findPath(EscapeCoordinate from, EscapeCoordinate to)
     {
         coordinates.clear();
 
@@ -100,19 +100,6 @@ public class AStar
 
         public int compareTo(CostPair o) {
             return Double.compare(cost, o.getCost());
-        }
-
-        @Override
-        public boolean equals(Object costPair) {
-
-            if (getClass() != costPair.getClass()) return false;
-            CostPair castedCostPair = (CostPair) costPair;
-            return item.equals(castedCostPair.getItem()) && castedCostPair.getCost() == cost;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(item);
         }
 
     }

@@ -1,6 +1,11 @@
 package escape.board;
 
 import escape.EscapeGameBuilder;
+import escape.Score;
+import escape.exception.MoveTooFar;
+import escape.exception.NoPathExists;
+import escape.exception.OutOfBoundsException;
+import escape.exception.SpaceMissingPiece;
 import escape.piece.EscapeGamePiece;
 import escape.movement.MoveManager;
 import escape.required.EscapePiece;
@@ -12,7 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static junit.framework.TestCase.*;
+//import static junit.framework.TestCase.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest
 {
@@ -27,8 +33,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board);
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
         board.createBoardSpace(makeCoordinate(1,1),null, snail );
         assertNotNull(board.getPieceAt(makeCoordinate(1, 1)));
     }
@@ -43,8 +49,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board);
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
         board.createBoardSpace(makeCoordinate(1,1),null, null );
         assertNull(board.getPieceAt(makeCoordinate(1, 1)));
     }
@@ -59,8 +65,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board);
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
         assertNull(board.getPieceAt(makeCoordinate(1, 1)));
     }
 
@@ -75,8 +81,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board);
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
         board.createBoardSpace(makeCoordinate(1,1),null, snail );
         assertTrue(board.getPieceAt(makeCoordinate(1, 1)).equals(snail));
     }
@@ -91,8 +97,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board);
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
         board.createBoardSpace(makeCoordinate(1,1),null, null);
         assertEquals(board.getPieceAt(makeCoordinate(1, 1)), null);
         board.createBoardSpace(makeCoordinate(1, 1), null, snail);
@@ -123,8 +129,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 1)},
-                board));
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        ));
 
         pieces.add(makePiece(
                 Player.PLAYER2,
@@ -134,8 +140,8 @@ public class BoardTest
                         new PieceAttribute(
                                 EscapePiece.PieceAttributeID.DISTANCE, 7),
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.JUMP)},
-                board));
+                                EscapePiece.PieceAttributeID.JUMP)}
+        ));
 
 
         assertFalse(board.getPiecesOnTheBoard().isEmpty());
@@ -160,8 +166,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 5)},
-                board));
+                                EscapePiece.PieceAttributeID.DISTANCE, 5)}
+        ));
 
         pieces.add(makePiece(
                 Player.PLAYER2,
@@ -169,8 +175,8 @@ public class BoardTest
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
                         new PieceAttribute(
-                                EscapePiece.PieceAttributeID.DISTANCE, 5)},
-                board));
+                                EscapePiece.PieceAttributeID.DISTANCE, 5)}
+        ));
 
 
         assertFalse(board.getPiecesOnTheBoard().isEmpty());
@@ -192,7 +198,7 @@ public class BoardTest
     }
 
 
-    public static EscapeGamePiece makePiece(Player player, EscapePiece.PieceName pieceName, EscapePiece.MovementPattern movementPattern, PieceAttribute[] attributes, Board board){
+    public static EscapeGamePiece makePiece(Player player, EscapePiece.PieceName pieceName, EscapePiece.MovementPattern movementPattern, PieceAttribute[] attributes){
         return new EscapeGamePiece(player,
                 new PieceTypeDescriptor(
                         pieceName,
@@ -213,8 +219,8 @@ public class BoardTest
             EscapePiece.MovementPattern.OMNI,
             new PieceAttribute[]{
                     new PieceAttribute(
-                            EscapePiece.PieceAttributeID.DISTANCE, 1)},
-            board);
+                            EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        );
 
         EscapeGamePiece horse = makePiece(
                 Player.PLAYER2,
@@ -225,8 +231,8 @@ public class BoardTest
                                 EscapePiece.PieceAttributeID.DISTANCE, 7),
                         new PieceAttribute(
                                 EscapePiece.PieceAttributeID.JUMP)
-                },
-                board);
+                }
+        );
 
 
         ArrayList<Space> boardSpaces = new ArrayList<>();
@@ -285,12 +291,110 @@ public class BoardTest
             this.coordinate = coordinate;
             this.boardSpace = boardSpace;
         }
-
-
-
-
-
     }
+
+    // ----- canMove
+
+    @Test
+    void canMove_outOfBoundsCanMove() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoNeighbors.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
+        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+    }
+
+    @Test
+    void canMove_noPieceCanMove() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoNeighbors.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
+        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+    }
+
+    @Test
+    void canMove_noPieceAtLocation() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPiecesInfinite.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(SpaceMissingPiece.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
+    }
+
+    @Test
+    void canMove_noneOfThePlayersPiecesAtLocation() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/PlayersHaveSamePiece.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(SpaceMissingPiece.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(10, 12), new EscapeCoordinate(1, 1)));
+    }
+
+    @Test
+    void canMove_pieceCantTravelFarEnough() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/PlayersHaveSamePiece.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(MoveTooFar.class, () -> board.canMove(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(16, 12)));
+    }
+
+    @Test
+    void canMove_pieceCanMove() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/PlayersHaveSamePiece.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertTrue(board.canMove(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(13, 13)));
+    }
+
+
+    // ----- move
+
+    @Test
+    void move_noPathCouldBeFound() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPath.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-4, 0)));
+    }
+
+    @Test
+    void move_PathIsLargerThanThePiecesValue() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPath.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1)));
+    }
+
+    @Test
+    void move_NormalMove() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/TheBox.egc");
+        Board board = new Board(egb.getGameInitializer());
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, -3)), new Score(Player.PLAYER1));
+        EscapeGamePiece dog = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.DOG,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 5)}
+        );
+        assertEquals(board.getPieceAt(new EscapeCoordinate(2, -3)), dog);
+        assertNull(board.getPieceAt(new EscapeCoordinate(1, 1)));
+    }
+
+    @Test
+    void move_PieceReachesTheEnd() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/test1.egc");
+        Board board = new Board(egb.getGameInitializer());
+        EscapeGamePiece dog = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.HORSE,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 7),
+                        new PieceAttribute(EscapePiece.PieceAttributeID.JUMP)}
+        );
+
+        Score score = new Score(Player.PLAYER2);
+        score.incrementPlayerScore(dog);
+        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)), score);
+        assertNull(board.getPieceAt(new EscapeCoordinate(5, 12)));
+        assertNull(board.getPieceAt(new EscapeCoordinate(10, 12)));
+    }
+
+
 
 
 }

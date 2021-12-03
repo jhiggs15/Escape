@@ -13,8 +13,7 @@ import java.util.stream.Stream;
 
 public class NeighborFinder
 {
-    enum Neighbor {TOP_LEFT, TOP, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT}
-//    ArrayList<Neighbor> allDirections = Arrays.asList(Neighbor.TOP_LEFT);
+//    enum Neighbor {TOP_LEFT, TOP, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT}
 
     private NeighborSearch neighborSearch;
     private static AllNeighborFinder allNeighborFinder;
@@ -78,10 +77,10 @@ public class NeighborFinder
 //        return neighbors.get(neighborType.ordinal());
 //    }
 
-    private static List<EscapeCoordinate> selectNeighbors(EscapeCoordinate coordinate, Neighbor... neighborTypes){
-        List<EscapeCoordinate> neighbors = allNeighborFinder.findAllNeighbors(coordinate);
-        return Arrays.stream(neighborTypes).map(neighborType -> neighbors.get(neighborType.ordinal())).collect(Collectors.toList());
-    }
+//    private static List<EscapeCoordinate> selectNeighbors(EscapeCoordinate coordinate, Neighbor... neighborTypes){
+//        List<EscapeCoordinate> neighbors = allNeighborFinder.findAllNeighbors(coordinate);
+//        return Arrays.stream(neighborTypes).map(neighborType -> neighbors.get(neighborType.ordinal())).collect(Collectors.toList());
+//    }
 
 
 
