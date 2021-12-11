@@ -27,3 +27,9 @@ move
 + score limit and turn limit are in effect, score limit is reached first
 + score limit and turn limit are in effect, turn limit is reached first
 + both are reached and turn limit are in effect, score limit is reached first
+
+
+observer
++ adding an observer lets them receive notifications
++ adding multiple observers lets them recieve notificiations
++ removing observer prevents them from getting notifications

@@ -1,4 +1,4 @@
-package escape;
+package escape.gamemanagement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
@@ -14,6 +14,7 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
     private ScoreManager scoreManager;
     private TurnManager turnManager;
     private RuleManager ruleManager;
+    private ObserverManager observerManager;
 
 
     public GameManager(EscapeGameInitializer gameInitializer)
@@ -21,7 +22,8 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
         gameBoard = new Board(gameInitializer);
         scoreManager = new ScoreManager();
         turnManager = new TurnManager();
-        ruleManager = new RuleManager(gameInitializer.getRules(), scoreManager, turnManager);
+        observerManager = new ObserverManager();
+        ruleManager = new RuleManager(gameInitializer.getRules(), scoreManager, turnManager, observerManager);
     }
 
     @Override
@@ -35,7 +37,8 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
                 Score score = gameBoard.move(currentPlayer, from, to);
                 scoreManager.addScore(score);
                 turnManager.endTurn();
-                ruleManager.checkGame();
+                if(!ruleManager.checkGame())
+                    observerManager.notifyAll(currentPlayer.toString() + " move was successful");
                 return true;
             }
             else
@@ -44,7 +47,7 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
         }
         catch (EscapeException exception)
         {
-            System.err.println(exception);
+            observerManager.notifyAll(exception.getClass().toString(), exception);
             return false;
         }
     }
@@ -71,11 +74,11 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
 
     public GameObserver addObserver(GameObserver observer)
     {
-        return EscapeGameManager.super.addObserver(observer);
+        return observerManager.addObserver(observer);
     }
 
     public GameObserver removeObserver(GameObserver observer)
     {
-        return EscapeGameManager.super.removeObserver(observer);
+        return observerManager.removeObserver(observer);
     }
 }

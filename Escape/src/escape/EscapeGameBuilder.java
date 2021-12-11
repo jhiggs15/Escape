@@ -15,6 +15,9 @@ package escape;
 import java.io.*;
 import javax.xml.bind.*;
 import javax.xml.transform.stream.StreamSource;
+
+import escape.gamemanagement.EscapeGameManager;
+import escape.gamemanagement.GameManager;
 import org.antlr.v4.runtime.CharStreams;
 import econfig.EscapeConfigurator;
 import escape.util.EscapeGameInitializer;

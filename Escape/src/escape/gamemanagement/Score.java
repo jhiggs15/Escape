@@ -1,4 +1,4 @@
-package escape;
+package escape.gamemanagement;
 
 import escape.piece.EscapeGamePiece;
 import escape.required.Player;

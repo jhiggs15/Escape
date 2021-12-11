@@ -1,10 +1,6 @@
-package escape;
+package escape.gamemanagement;
 
-import escape.piece.EscapeGamePiece;
 import escape.required.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScoreManager
 {

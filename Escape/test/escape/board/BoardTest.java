@@ -1,10 +1,9 @@
 package escape.board;
 
 import escape.EscapeGameBuilder;
-import escape.Score;
+import escape.gamemanagement.Score;
 import escape.exception.*;
 import escape.piece.EscapeGamePiece;
-import escape.movement.MoveManager;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;

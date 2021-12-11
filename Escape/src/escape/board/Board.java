@@ -1,9 +1,7 @@
 package escape.board;
 
-import escape.Score;
+import escape.gamemanagement.Score;
 import escape.exception.NoPathExists;
-import escape.exception.OutOfBoundsException;
-import escape.movement.BoundsChecker;
 import escape.movement.MoveManager;
 import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
@@ -16,7 +14,6 @@ import escape.util.PieceTypeDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Board {

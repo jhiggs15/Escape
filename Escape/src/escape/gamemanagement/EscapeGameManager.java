@@ -9,7 +9,7 @@
  * 
  * Copyright ©2016-2020 Gary F. Pollice
  *******************************************************************************/
-package escape;
+package escape.gamemanagement;
 
 import escape.exception.EscapeException;
 import escape.required.*;

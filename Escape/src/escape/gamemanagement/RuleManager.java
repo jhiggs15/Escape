@@ -1,4 +1,4 @@
-package escape;
+package escape.gamemanagement;
 
 import escape.required.Player;
 import escape.required.Rule;
@@ -10,12 +10,14 @@ public class RuleManager
 {
     private ScoreManager scoreManager;
     private TurnManager turnManager;
+    private ObserverManager observerManager;
     private Map<Rule.RuleID, RuleDescriptor> rules = new Hashtable<>();
     private boolean gameIsOver = false;
 
-    public RuleManager(RuleDescriptor[] rules, ScoreManager scoreManager, TurnManager turnManager) {
+    public RuleManager(RuleDescriptor[] rules, ScoreManager scoreManager, TurnManager turnManager, ObserverManager observerManager) {
         this.scoreManager = scoreManager;
         this.turnManager = turnManager;
+        this.observerManager = observerManager;
         for(RuleDescriptor rule : rules)
             this.rules.put(rule.ruleId, rule);
     }
@@ -25,10 +27,12 @@ public class RuleManager
         return gameIsOver;
     }
 
-    public void checkGame()
+    public boolean checkGame()
     {
         for(Rule.RuleID rule : rules.keySet())
-            if(!gameIsOver) checkRule(rule);
+            if(!gameIsOver)
+                checkRule(rule);
+        return gameIsOver;
     }
 
     private void checkRule(Rule.RuleID rule)
@@ -75,13 +79,13 @@ public class RuleManager
 
     private void markWinner(Player player)
     {
-        System.out.print("PLAYER " + (player.ordinal() + 1) + " wins");
+        observerManager.notifyAll("Player " + (player.ordinal() + 1) + " wins");
         gameIsOver = true;
     }
 
     private void markTie()
     {
-        System.out.print("Game Over");
+        observerManager.notifyAll("Game over in a draw");
         gameIsOver = true;
     }
 

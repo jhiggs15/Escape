@@ -1,7 +1,10 @@
 package escape;
 
 import escape.board.EscapeCoordinate;
-import escape.exception.EscapeException;
+import escape.exception.*;
+import escape.gamemanagement.EscapeGameManager;
+import escape.gamemanagement.EscapeGameObsever;
+import escape.gamemanagement.GameManager;
 import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.GameObserver;
@@ -18,9 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameMangerTest
 {
 
-    public EscapeGameManager<EscapeCoordinate> makeGameManager(String filename) throws Exception {
+    public EscapeGameManager<EscapeCoordinate> makeGameManager(String filename, GameObserver gameObserver ) throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder(filename);
         EscapeGameManager<EscapeCoordinate> gm = egb.makeGameManager();
+        gm.addObserver(gameObserver);
         return gm;
     }
 
@@ -35,10 +39,15 @@ public class GameMangerTest
     @Test
     void move_triesToMoveOutOfBounds() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/NoNeighbors.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/NoNeighbors.egc", observer);
 
         assertFalse(gm.move(gm.makeCoordinate(2, 2), gm.makeCoordinate(1, 1)));
         GameManager myGm = (GameManager) gm;
+
+        assertEquals(observer.getMessage(), OutOfBoundsException.class.toString());
+        assertEquals(observer.getError(), OutOfBoundsException.createString(gm.makeCoordinate(2, 2)));
+
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
         assertEquals(((GameManager) gm).getPlayerScore(Player.PLAYER1), 0);
 
@@ -50,9 +59,14 @@ public class GameMangerTest
     @Test
     void move_noPieceAtStart() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/NoPiecesInfinite.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/NoPiecesInfinite.egc", observer);
 
         assertFalse(gm.move(gm.makeCoordinate(-9, 8), gm.makeCoordinate(1, 1)));
+
+        assertEquals(observer.getMessage(), SpaceMissingPiece.class.toString());
+        assertEquals(observer.getError(), SpaceMissingPiece.createString(Player.PLAYER1, gm.makeCoordinate(-9, 8)));
+
         GameManager myGm = (GameManager) gm;
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
         assertEquals(((GameManager) gm).getPlayerScore(Player.PLAYER1), 0);
@@ -62,9 +76,14 @@ public class GameMangerTest
     @Test
     void move_noneOfAPlayersPiecesAtLocation() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc", observer);
 
         assertFalse(gm.move(gm.makeCoordinate(10, 12), gm.makeCoordinate(1, 1)));
+        assertEquals(observer.getMessage(), SpaceMissingPiece.class.toString());
+        assertEquals(observer.getError(), SpaceMissingPiece.createString(Player.PLAYER1, gm.makeCoordinate(10, 12)));
+
         GameManager myGm = (GameManager) gm;
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
         assertEquals(((GameManager) gm).getPlayerScore(Player.PLAYER1), 0);
@@ -73,9 +92,15 @@ public class GameMangerTest
     @Test
     void move_pieceCannotTravelFarEnough() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
 
-        assertFalse(gm.move(gm.makeCoordinate(10, 12), gm.makeCoordinate(16, 12)));
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc", observer);
+
+        assertFalse(gm.move(gm.makeCoordinate(4, 4), gm.makeCoordinate(10, 4)));
+        
+        assertEquals(observer.getMessage(), MoveTooFar.class.toString());
+        assertEquals(observer.getError(), MoveTooFar.createString(gm.makeCoordinate(4, 4), gm.makeCoordinate(10, 4)));
+
         GameManager myGm = (GameManager) gm;
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
         assertEquals(((GameManager) gm).getPlayerScore(Player.PLAYER1), 0);
@@ -84,9 +109,14 @@ public class GameMangerTest
     @Test
     void move_pieceCanMove() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/PlayersHaveSamePiece.egc", observer);
 
         assertTrue(gm.move(gm.makeCoordinate(4, 4), gm.makeCoordinate(6, 9)));
+
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+        assertNull(observer.getError());
 
         EscapePiece gamePiece = makePiece(
                 Player.PLAYER1,
@@ -109,8 +139,13 @@ public class GameMangerTest
     @Test
     void move_noPathCouldBeFound() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ForcedPath.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ForcedPath.egc", observer);
         assertFalse(gm.move(new EscapeCoordinate(-1, -1), new EscapeCoordinate(1, -3)));
+
+        assertEquals(observer.getMessage(), NoPathExists.class.toString());
+        assertEquals(observer.getError(), NoPathExists.createString(gm.makeCoordinate(-1, -1), gm.makeCoordinate(1, -3)));
 
         GameManager myGm = (GameManager) gm;
 
@@ -121,8 +156,13 @@ public class GameMangerTest
     @Test
     void move_shortestPathIsLongerThanPiecesValue() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ForcedPath.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ForcedPath.egc", observer);
         assertFalse(gm.move(new EscapeCoordinate(2, 0), new EscapeCoordinate(2, 4)));
+
+        assertEquals(observer.getMessage(), MoveTooFar.class.toString());
+        assertEquals(observer.getError(), MoveTooFar.createString(gm.makeCoordinate(2, 0), gm.makeCoordinate(2, 4)));
 
         GameManager myGm = (GameManager) gm;
 
@@ -133,15 +173,28 @@ public class GameMangerTest
     @Test
     void move_multipleConsecutiveMoves() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/test1.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/test1.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(4, 4), new EscapeCoordinate(5, 5)));
         assertEquals(myGm.whoseTurn(), Player.PLAYER2);
+
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+        assertNull(observer.getError());
+
         assertTrue(gm.move(new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 8)));
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
+
+        assertEquals(observer.getMessage(), Player.PLAYER2 + " move was successful");
+        assertNull(observer.getError());
+
         assertTrue(gm.move(new EscapeCoordinate(5, 5), new EscapeCoordinate(6, 6)));
         assertEquals(myGm.whoseTurn(), Player.PLAYER2);
+
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+        assertNull(observer.getError());
 
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -172,12 +225,21 @@ public class GameMangerTest
     @Test
     void move_pieceReachesTheEndAndScores() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/test1.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/test1.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(4, 4), new EscapeCoordinate(5, 5)));
         assertEquals(myGm.whoseTurn(), Player.PLAYER2);
+
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+        assertNull(observer.getError());
+
         assertTrue(gm.move(new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)));
+
+        assertEquals(observer.getMessage(), Player.PLAYER2 + " move was successful");
+        assertNull(observer.getError());
 
         EscapeGamePiece horse = makePiece(
                 Player.PLAYER2,
@@ -199,7 +261,9 @@ public class GameMangerTest
     @Test
     void move_turnLimitReachedTie() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -210,20 +274,19 @@ public class GameMangerTest
 
         assertTrue(gm.move(new EscapeCoordinate(3, 3), new EscapeCoordinate(4, 4)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
 
-        assertEquals("Game Over", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Game over in a draw");
+        assertNull(observer.getError());
+
     }
 
     @Test
     void move_PlayerMovesAfterGameIsOver() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -234,14 +297,10 @@ public class GameMangerTest
 
         assertTrue(gm.move(new EscapeCoordinate(3, 3), new EscapeCoordinate(4, 4)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
 
-        assertEquals("Game Over", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Game over in a draw");
+        assertNull(observer.getError());
 
         assertFalse(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
 
@@ -250,7 +309,9 @@ public class GameMangerTest
     @Test
     void move_turnLimitReachedPlayer1Wins() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -261,20 +322,19 @@ public class GameMangerTest
 
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(4, 3)));
 
-        assertEquals("PLAYER 1 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 1 wins");
+        assertNull(observer.getError());
+
     }
 
     @Test
     void move_turnLimitReachedPlayer2Wins() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/TurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -285,40 +345,38 @@ public class GameMangerTest
 
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 2 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 2 wins");
+        assertNull(observer.getError());
+
     }
 
     @Test
     void move_scoreLimitReachedPlayer1Wins() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
         assertTrue(gm.move(new EscapeCoordinate(1, 0), new EscapeCoordinate(2, 1)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(2, 2), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 1 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 1 wins");
+        assertNull(observer.getError());
+
 
     }
 
     @Test
     void move_scoreLimitReachedPlayer2Wins() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -328,34 +386,27 @@ public class GameMangerTest
         assertTrue(gm.move(new EscapeCoordinate(2, 1), new EscapeCoordinate(3, 2)));
 
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
-
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 2 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 2 wins");
+        assertNull(observer.getError());
     }
 
     @Test
     void move_scoreLimitAndTurnLimitScoreLimitReached() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(5, 5)));
         assertTrue(gm.move(new EscapeCoordinate(1, 0), new EscapeCoordinate(2, 1)));
 
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 1 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 1 wins");
+        assertNull(observer.getError());
 
     }
 
@@ -363,7 +414,9 @@ public class GameMangerTest
     @Test
     void move_scoreLimitAndTurnLimitReachedTurnLimitReached() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -373,22 +426,19 @@ public class GameMangerTest
         assertTrue(gm.move(new EscapeCoordinate(2, 1), new EscapeCoordinate(3, 2)));
 
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
-
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 2 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 2 wins");
+        assertNull(observer.getError());
 
     }
 
     @Test
     void move_scoreLimitAndTurnLimitReachedBothReached() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc");
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer);
         GameManager myGm = (GameManager) gm;
 
         assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
@@ -398,30 +448,67 @@ public class GameMangerTest
         assertTrue(gm.move(new EscapeCoordinate(1, -2), new EscapeCoordinate(3, 2)));
 
         assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
-
-        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        final PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(5, 5)));
 
-        assertEquals("PLAYER 2 wins", outContent.toString());
-        System.setOut(originalOut);
+        assertEquals(observer.getMessage(), "Player 2 wins");
+        assertNull(observer.getError());
 
     }
 
 
     // ---- observer tests
 
+
     @Test
-    void observerTest() throws Exception
+    void addingObserver() throws Exception
     {
-        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc");
-        GameObserver gmob = new EscapeGameObsever();
-        assertThrows(EscapeException.class,() -> gmob.notify("hello world"));
-        assertThrows(EscapeException.class,() -> gmob.notify("hello world", new EscapeException("hello", new Throwable())));
-        assertThrows(EscapeException.class, () -> gm.addObserver(new EscapeGameObsever()));
-        assertThrows(EscapeException.class, () -> gm.removeObserver(new EscapeGameObsever()));
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer);
+        GameManager myGm = (GameManager) gm;
+
+        assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+    }
+
+    @Test
+    void addingMultipleObservers() throws Exception
+    {
+        EscapeGameObsever observer1 = new EscapeGameObsever();
+        EscapeGameObsever observer2 = new EscapeGameObsever();
+        EscapeGameObsever observer3 = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer1);
+        gm.addObserver(observer2);
+        gm.addObserver(observer3);
+
+        assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+        assertEquals(observer1.getMessage(), Player.PLAYER1 + " move was successful");
+        assertEquals(observer2.getMessage(), Player.PLAYER1 + " move was successful");
+        assertEquals(observer3.getMessage(), Player.PLAYER1 + " move was successful");
+    }
+
+    @Test
+    void removeObserver() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/ScoreLimitAndTurnLimit.egc", observer);
+        GameManager myGm = (GameManager) gm;
+
+        assertTrue(gm.move(new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+        assertTrue(gm.move(new EscapeCoordinate(1, 0), new EscapeCoordinate(5, 5)));
+
+        assertTrue(gm.move(new EscapeCoordinate(2, 2), new EscapeCoordinate(3, 3)));
+        gm.removeObserver(observer);
+        assertTrue(gm.move(new EscapeCoordinate(1, -2), new EscapeCoordinate(3, 2)));
+
+        assertTrue(gm.move(new EscapeCoordinate(1, -1), new EscapeCoordinate(2, 0)));
+        assertTrue(gm.move(new EscapeCoordinate(3, 2), new EscapeCoordinate(5, 5)));
+
+        // observer does not receive the Player 2 wins notification
+        assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
+        assertNull(observer.getError());
     }
 
 
