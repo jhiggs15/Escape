@@ -50,6 +50,12 @@ move
 + piece reaches the end and scores
 + only path is through an exit
     correctly removes such a piece and counts it toward score
++ unblock piece can move past block
++ unblock piece cannot land on a block
++ fly piece can move past block
++ fly piece cannot land on a block
+
+
 
 
 

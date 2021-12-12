@@ -24,6 +24,10 @@ public class EscapeGamePiece implements EscapePiece
         this.descriptor = descriptor;
     }
 
+    public boolean hasAttribute(PieceAttributeID attributeID)
+    {
+        return descriptor.getAttribute(attributeID) != null;
+    }
 
     public MovementPattern getMovementPattern()
     {

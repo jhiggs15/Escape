@@ -47,6 +47,8 @@ public class PieceTypeDescriptor
     public int getMovementValue()
     {
         PieceAttribute distance = getAttribute(PieceAttributeID.DISTANCE);
+        if(distance == null)
+            distance = getAttribute(PieceAttributeID.FLY);
         return distance.getValue();
 //        if(distance != null) return distance.getValue();
 //        return getAttribute(PieceAttributeID.FLY).getValue();

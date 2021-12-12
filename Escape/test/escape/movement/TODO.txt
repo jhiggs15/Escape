@@ -17,29 +17,38 @@ NeighborFinder
 ---------------
 
 findNeighbors
+
+ Movement Patterns
     OMNI - SQUARE
-+ unblocked check that it has all six directions and that all coordinate types work
-    +  0 0
-    + pos pos
-    + neg pos
-    + pos neg
-    + neg neg
-+ get neighbors but some are out of bounds
-+ get neighbors but all are out of bounds
-+ get neighbors that are the boundary
+        + unblocked check that it has all six directions and that all coordinate types work
+            +  0 0
+            + pos pos
+            + neg pos
+            + pos neg
+            + neg neg
+        + get neighbors but some are out of bounds
+        + get neighbors but all are out of bounds
+        + get neighbors that are the boundary
 
     OMNI - HEX
+ Attributes
+    UNBLOCK + DISTANCE
+        + can move past blocks
+        + cannot move past pieces
+    FLY
+        + can move past blocks
+        + cannot move past pieces
 
 
 
 minimum distance
     OMNI
-+ 0 away
-+ 1 away
-    + all directions
-+ 2 away
-    + all directions
-+ 3 away
-    + all directions
+        + 0 away
+        + 1 away
+            + all directions
+        + 2 away
+            + all directions
+        + 3 away
+            + all directions
 
 

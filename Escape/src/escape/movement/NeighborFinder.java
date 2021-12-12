@@ -2,6 +2,7 @@ package escape.movement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
+import escape.piece.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
 
@@ -51,10 +52,10 @@ public class NeighborFinder
         }
     }
 
-    public List<EscapeCoordinate> getNeighbors(EscapeCoordinate coordinate)
+    public List<EscapeCoordinate> getNeighbors(EscapeCoordinate coordinate, EscapeGamePiece piece)
     {
         return neighborSearch.findNeighbors(coordinate)
-                .stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor))
+                .stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor, piece))
                 .collect(Collectors.toList());
     }
 

@@ -1,0 +1,14 @@
+Coordinate type : SQUARE
+xMax : 3
+yMax : 3
+
+Locations :
+	(0, 0) player1 DOG
+
+Piece descriptors :
+	DOG omni [distance 2]
+
+Rules :
+	REMOVE
+	SCORE 10
+	TURN_LIMIT 20

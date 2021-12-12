@@ -3,6 +3,7 @@ package escape.movement.pathfinding;
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
 import escape.movement.NeighborFinder;
+import escape.piece.EscapeGamePiece;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class AStar implements PathFinding
         return coordinates.poll().getItem();
     }
 
-    public List<EscapeCoordinate> findPath(EscapeCoordinate from, EscapeCoordinate to)
+    public List<EscapeCoordinate> findPath(EscapeCoordinate from, EscapeCoordinate to, EscapeGamePiece piece)
     {
         coordinates.clear();
 
@@ -46,7 +47,7 @@ public class AStar implements PathFinding
             EscapeCoordinate current = getNextCoordinate();
             if(current.equals(to)) break;
 
-            List<EscapeCoordinate> neighbors = neighborFinder.getNeighbors(current);
+            List<EscapeCoordinate> neighbors = neighborFinder.getNeighbors(current, piece);
 
             for(EscapeCoordinate neighbor : neighbors)
             {

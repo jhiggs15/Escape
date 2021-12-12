@@ -84,6 +84,14 @@ public class Board {
         return board;
     }
 
+    public LocationType getLocationType(EscapeCoordinate coordinate)
+    {
+        if(spaceExists(coordinate))
+            return board.get(coordinate).getType();
+        else
+            return LocationType.CLEAR;
+    }
+
     public List<EscapeGamePiece> getPiecesOnTheBoard()
     {
         return piecesOnTheBoard;
@@ -94,12 +102,13 @@ public class Board {
         if(canMove(player, from, to))
         {
             // no path exists
-            List<EscapeCoordinate> path = moveManager.findPath(from, to);
+            EscapeGamePiece targetedPiece = getPieceAt(from);
+            List<EscapeCoordinate> path = moveManager.findPath(from, to, targetedPiece);
             int pathSize = path.size();
             if(pathSize == 0 && !from.equals(to)) throw new NoPathExists(from, to);
 
             // the shortest path is larger than the possible spaces the piece can move
-            int pieceValue = getPieceAt(from).getMovementValue();
+            int pieceValue = targetedPiece.getMovementValue();
             if(pathSize > pieceValue) throw new NoPathExists(from, to, pathSize, pieceValue);
 
             EscapeCoordinate destination = executeMove(from, path);
@@ -158,9 +167,9 @@ public class Board {
         return board.get(coordinate) != null;
     }
 
-    public boolean isAccessible(EscapeCoordinate coordinate)
+    public boolean isAccessible(EscapeCoordinate coordinate, EscapeGamePiece piece)
     {
-        return (spaceExists(coordinate) && board.get(coordinate).isAccessible()) || !spaceExists(coordinate) ;
+        return (spaceExists(coordinate) && board.get(coordinate).isAccessible(piece)) || !spaceExists(coordinate) ;
     }
 
 

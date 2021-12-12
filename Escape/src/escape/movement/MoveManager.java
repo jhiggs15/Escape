@@ -8,6 +8,7 @@ import escape.movement.pathfinding.PathFindingFactory;
 import escape.piece.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
+import escape.required.LocationType;
 import escape.required.Player;
 
 import java.util.List;
@@ -30,9 +31,9 @@ public class MoveManager
         this.pathFindingFactory = new PathFindingFactory(neighborFinder);
     }
 
-    public List<EscapeCoordinate> findPath(EscapeCoordinate from, EscapeCoordinate to)
+    public List<EscapeCoordinate> findPath(EscapeCoordinate from, EscapeCoordinate to, EscapeGamePiece piece)
     {
-        return pathFinding.findPath(from, to);
+        return pathFinding.findPath(from, to, piece);
     }
 
     public boolean canMove(Player player, EscapeCoordinate from, EscapeCoordinate to)
@@ -57,6 +58,10 @@ public class MoveManager
         EscapePiece.MovementPattern movementPattern = piece.getMovementPattern();
         neighborFinder.changeMovementPattern(movementPattern);
         pathFinding = pathFindingFactory.makePathFinder(movementPattern);
+        if( (piece.hasAttribute(EscapePiece.PieceAttributeID.UNBLOCK) || piece.hasAttribute(EscapePiece.PieceAttributeID.FLY)  )
+                && board.getLocationType(to).equals(LocationType.BLOCK))
+            throw new NoPathExists(from, to, true);
+
         if(neighborFinder.minimumDistance(from, to) > value) throw new MoveTooFar(from, to);
 
         return true;

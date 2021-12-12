@@ -20,9 +20,18 @@ public class BoardSpace
         addPiece(piece);
     }
 
-    public boolean isAccessible()
+    public boolean spaceIsEmpty()
     {
-        return type != LocationType.BLOCK && pieces.size() == 0;
+        return pieces.size() == 0;
+    }
+
+    public boolean isAccessible(EscapeGamePiece piece)
+    {
+        if(piece.hasAttribute(EscapePiece.PieceAttributeID.UNBLOCK) ||
+                        piece.hasAttribute(EscapePiece.PieceAttributeID.FLY))
+            return spaceIsEmpty();
+
+        return type != LocationType.BLOCK && spaceIsEmpty();
     }
 
 

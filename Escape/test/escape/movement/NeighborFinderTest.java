@@ -3,9 +3,13 @@ package escape.movement;
 import escape.EscapeGameBuilder;
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
+import escape.piece.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
 import escape.required.Player;
+import escape.util.EscapeGameInitializer;
+import escape.util.PieceAttribute;
+import escape.util.PieceTypeDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,16 +20,15 @@ import static junit.framework.TestCase.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NeighborFinderTest
 {
 
-    public NeighborFinder initializeNeighborFinder(String filename, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType) throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder(filename);
-        Board board = new Board(egb.getGameInitializer());
-        int xMax = egb.getGameInitializer().getxMax();
-        int yMax = egb.getGameInitializer().getyMax();
+    public NeighborFinder initializeNeighborFinder(Board board, EscapeGameInitializer egb, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType) throws Exception {
+        int xMax = egb.getxMax();
+        int yMax = egb.getyMax();
         NeighborFinder neighborFinder =new NeighborFinder(coordinateType, board, new BoundsChecker(xMax, yMax) );
         neighborFinder.changeMovementPattern(movementPattern);
 
@@ -34,9 +37,28 @@ public class NeighborFinderTest
 
     // ------ get Neighbors
 
-    boolean genericNeighborCheck(String filename, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType, EscapeCoordinate coordinate, List<EscapeCoordinate> neighbors) throws Exception {
-        NeighborFinder neighborFinder = initializeNeighborFinder(filename, movementPattern, coordinateType );
-        List<EscapeCoordinate> foundNeighbors = neighborFinder.getNeighbors(coordinate);
+    public static EscapeGamePiece makePiece(Player player, EscapePiece.PieceName pieceName, EscapePiece.MovementPattern movementPattern, PieceAttribute[] attributes){
+        return new EscapeGamePiece(player,
+                new PieceTypeDescriptor(
+                        pieceName,
+                        movementPattern,
+                        attributes));
+    }
+
+    boolean genericNeighborCheck(String filename, EscapePiece.MovementPattern movementPattern, List<EscapePiece.PieceAttributeID> attributes, Coordinate.CoordinateType coordinateType, EscapeCoordinate coordinate, List<EscapeCoordinate> neighbors) throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder(filename);
+        Board board = new Board(egb.getGameInitializer());
+        NeighborFinder neighborFinder = initializeNeighborFinder(board, egb.getGameInitializer(), movementPattern, coordinateType);
+
+        List<PieceAttribute> pieceAttributes =  attributes.stream().map(attributeID -> new PieceAttribute(attributeID, 1)).collect(Collectors.toList());
+
+        EscapeGamePiece snail = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.SNAIL,
+                movementPattern,
+                pieceAttributes.toArray(new PieceAttribute[pieceAttributes.size()]));
+
+        List<EscapeCoordinate> foundNeighbors = neighborFinder.getNeighbors(coordinate, snail);
         boolean isCorrect = true;
         for(EscapeCoordinate neighbor : neighbors)
         {
@@ -53,10 +75,12 @@ public class NeighborFinderTest
         return isCorrect && neighbors.size() == foundNeighbors.size();
     }
 
+
+    // -------- Movement Patterns
     @ParameterizedTest
     @MethodSource("OMNIProvider")
     void OMNINeighborCheck(String name, String filename, Coordinate.CoordinateType coordinateType, EscapeCoordinate coordinate, List<EscapeCoordinate> neighbors) throws Exception {
-        assertTrue(genericNeighborCheck(filename, EscapePiece.MovementPattern.OMNI, coordinateType, coordinate, neighbors));
+        assertTrue(genericNeighborCheck(filename, EscapePiece.MovementPattern.OMNI, Arrays.asList(EscapePiece.PieceAttributeID.DISTANCE), coordinateType, coordinate, neighbors));
 
     }
 
@@ -263,6 +287,80 @@ public class NeighborFinderTest
 
     }
 
+    // --------- Attributes
+
+    @ParameterizedTest
+    @MethodSource("UNBLOCKProvider")
+    void UNBLOCKNeighborCheck(String name, String filename, Coordinate.CoordinateType coordinateType, EscapeCoordinate coordinate, List<EscapeCoordinate> neighbors) throws Exception {
+        assertTrue(genericNeighborCheck(filename, EscapePiece.MovementPattern.OMNI, Arrays.asList(EscapePiece.PieceAttributeID.DISTANCE, EscapePiece.PieceAttributeID.UNBLOCK), coordinateType, coordinate, neighbors));
+
+    }
+
+    static Stream<Arguments> UNBLOCKProvider()
+    {
+        return (
+                Stream.of(
+                        Arguments.arguments("UNBLOCK can move past blocks",
+                                "Escape/config/egc/Block.egc",
+                                Coordinate.CoordinateType.SQUARE,
+                                new EscapeCoordinate(2, 2),
+                                Arrays.asList(
+                                        new EscapeCoordinate(3, 2),
+                                        new EscapeCoordinate(1, 2),
+                                        new EscapeCoordinate(2, 3),
+                                        new EscapeCoordinate(2, 1),
+                                        new EscapeCoordinate(3, 3),
+                                        new EscapeCoordinate(1, 1),
+                                        new EscapeCoordinate(1, 3),
+                                        new EscapeCoordinate(3, 1))
+                        ),
+                        Arguments.arguments("UNBLOCK cannot move past pieces",
+                                "Escape/config/egc/TheBox.egc",
+                                Coordinate.CoordinateType.HEX,
+                                new EscapeCoordinate(2, 2),
+                                new ArrayList<EscapeCoordinate>())
+                        )
+
+        );
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("FLYProvider")
+    void FLYNeighborCheck(String name, String filename, Coordinate.CoordinateType coordinateType, EscapeCoordinate coordinate, List<EscapeCoordinate> neighbors) throws Exception {
+        assertTrue(genericNeighborCheck(filename, EscapePiece.MovementPattern.OMNI, Arrays.asList(EscapePiece.PieceAttributeID.FLY), coordinateType, coordinate, neighbors));
+
+    }
+
+    static Stream<Arguments> FLYProvider()
+    {
+        return (
+                Stream.of(
+                        Arguments.arguments("UNBLOCK can move past blocks",
+                                "Escape/config/egc/Block.egc",
+                                Coordinate.CoordinateType.SQUARE,
+                                new EscapeCoordinate(2, 2),
+                                Arrays.asList(
+                                        new EscapeCoordinate(3, 2),
+                                        new EscapeCoordinate(1, 2),
+                                        new EscapeCoordinate(2, 3),
+                                        new EscapeCoordinate(2, 1),
+                                        new EscapeCoordinate(3, 3),
+                                        new EscapeCoordinate(1, 1),
+                                        new EscapeCoordinate(1, 3),
+                                        new EscapeCoordinate(3, 1))
+                        ),
+                        Arguments.arguments("UNBLOCK cannot move past pieces",
+                                "Escape/config/egc/TheBox.egc",
+                                Coordinate.CoordinateType.HEX,
+                                new EscapeCoordinate(2, 2),
+                                new ArrayList<EscapeCoordinate>())
+                )
+        );
+
+    }
+
+
 
     // ----- minimum Distance
 
@@ -271,7 +369,9 @@ public class NeighborFinderTest
     @MethodSource("OMNIDistanceProvider")
     void OMNIDistanceCheck(String name, String filename, Coordinate.CoordinateType coordinateType, EscapeCoordinate from, EscapeCoordinate to, int distance) throws Exception
     {
-        NeighborFinder neighborFinder = initializeNeighborFinder(filename, EscapePiece.MovementPattern.OMNI, coordinateType);
+        EscapeGameBuilder egb = new EscapeGameBuilder(filename);
+        Board board = new Board(egb.getGameInitializer());
+        NeighborFinder neighborFinder = initializeNeighborFinder(board, egb.getGameInitializer(), EscapePiece.MovementPattern.OMNI, coordinateType);
         assertEquals(neighborFinder.minimumDistance(from, to), distance );
     }
 
@@ -593,6 +693,9 @@ public class NeighborFinderTest
         );
 
     }
+
+
+
 
 
 }

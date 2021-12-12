@@ -7,6 +7,7 @@ import escape.movement.BoundsChecker;
 import escape.movement.NeighborFinder;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
+import escape.util.EscapeGameInitializer;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -20,11 +21,9 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AStarTest
 {
-    public NeighborFinder initializeNeighborFinder(String filename, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType) throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder(filename);
-        Board board = new Board(egb.getGameInitializer());
-        int xMax = egb.getGameInitializer().getxMax();
-        int yMax = egb.getGameInitializer().getyMax();
+    public NeighborFinder initializeNeighborFinder(Board board, EscapeGameInitializer egb, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType) throws Exception {
+        int xMax = egb.getxMax();
+        int yMax = egb.getyMax();
         NeighborFinder neighborFinder =new NeighborFinder(coordinateType, board, new BoundsChecker(xMax, yMax) );
         neighborFinder.changeMovementPattern(movementPattern);
 
@@ -34,11 +33,15 @@ public class AStarTest
     @ParameterizedTest
     @MethodSource({"OMNIAStarProvider"})
     void validatePath(String name, String filename, EscapeCoordinate from, EscapeCoordinate to, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType, int lengthOfPath, List<EscapeCoordinate> path) throws Exception {
-        NeighborFinder neighborFinder = initializeNeighborFinder(filename, movementPattern, coordinateType);
+        EscapeGameBuilder egb = new EscapeGameBuilder(filename);
+        Board board = new Board(egb.getGameInitializer());
+        NeighborFinder neighborFinder = initializeNeighborFinder(board, egb.getGameInitializer(), movementPattern, coordinateType);
+
         AStar aStar = new AStar(neighborFinder);
-        List<EscapeCoordinate> generatedPath = aStar.findPath(from, to);
+        List<EscapeCoordinate> generatedPath = aStar.findPath(from, to, board.getPieceAt(from));
         assertTrue(generatedPath.isEmpty() || generatedPath.get(generatedPath.size() - 1).equals(to));
         assertEquals(generatedPath.size(), lengthOfPath);
+
         if(path != null)
         {
             for(int i = 0; i < path.size(); i++)

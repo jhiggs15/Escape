@@ -1,0 +1,40 @@
+Coordinate type : SQUARE
+xMax : 0
+yMax : 0
+
+Locations :
+	(1, 1) block
+	(1, 2) block
+	(1, 3) block
+	(2, 1) block
+	(2, 3) block
+	(3, 1) block
+	(3, 2) block
+	(3, 3) block
+
+	(1, 0) block
+	(3, 0) block
+	(1, -1) block
+	(2, -1) block
+	(3, -1) block
+
+    (0, 3) block
+    (-1, 3) block
+    (-1, 2) block
+    (-1, 1) block
+    (0, 1) block
+
+	(2, 2) player1 frog
+	(2, 0) player2 dog
+	(0, 2) player1 HORSE
+
+Piece descriptors :
+	DOG omni [distance 5]
+	FROG omni [distance 3, unblock]
+	BIRD omni [distance 20]
+	HORSE omni [FLY 3]
+
+Rules :
+	REMOVE
+	SCORE 10
+	TURN_LIMIT 20

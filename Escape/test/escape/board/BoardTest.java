@@ -21,7 +21,7 @@ public class BoardTest
     // ----- get piece
     @Test
     void getPieceThatExists() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -37,7 +37,7 @@ public class BoardTest
 
     @Test
     void getPieceThatDNEHasSpace() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -53,7 +53,7 @@ public class BoardTest
 
     @Test
     void getPieceThatDNEHasNoSpace() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -69,7 +69,7 @@ public class BoardTest
     // ----- Add piece to the board
     @Test
     void addNewPieceToNewCoordinate() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -85,7 +85,7 @@ public class BoardTest
 
     @Test
     void addNewPieceToPiecelessBoardSpace() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
         EscapeGamePiece snail = makePiece(
                 Player.PLAYER1,
@@ -104,7 +104,7 @@ public class BoardTest
 
     @Test
     void createEmptySpace() throws Exception {
-        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoPieces.egc");
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/InfiniteBoard.egc");
         Board board = new Board(egb.getGameInitializer());
 
         board.createBoardSpace(makeCoordinate(1,1),null, null);
@@ -411,6 +411,82 @@ public class BoardTest
         assertNull(board.getPieceAt(new EscapeCoordinate(-2, -1)));
         assertNull(board.getPieceAt(new EscapeCoordinate(-1, 1)));
     }
+
+
+    @Test
+    void move_unblockPieceCanMovePastBlocks() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        EscapeGamePiece frog = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.FROG,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 3),
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.UNBLOCK),
+                }
+        );
+
+        Score score = new Score(Player.PLAYER1);
+
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(4, 1)), score);
+        assertNull(board.getPieceAt(new EscapeCoordinate(2, 2)));
+        assertEquals(board.getPieceAt(new EscapeCoordinate(4, 1)), frog);
+
+    }
+
+    @Test
+    void move_unblockPieceCannotLandOnBlock() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 2)));
+    }
+
+    @Test
+    void move_FLYPieceCanMovePastBlocks() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        EscapeGamePiece frog = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.HORSE,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.FLY, 3),
+                }
+        );
+
+        Score score = new Score(Player.PLAYER1);
+
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-2, 2)), score);
+        assertNull(board.getPieceAt(new EscapeCoordinate(0, 2)));
+        assertEquals(board.getPieceAt(new EscapeCoordinate(-2, 2)), frog);
+
+    }
+
+    @Test
+    void move_FLYPieceCannotLandOnBlock() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-1, 2)));
+    }
+
+    @Test
+    void move_normalPiecesMoveAroundBlock() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPathBlock.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        Score score = new Score(Player.PLAYER1);
+
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1)), score);
+    }
+
 
 
 
