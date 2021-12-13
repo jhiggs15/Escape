@@ -487,6 +487,16 @@ public class BoardTest
         assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1)), score);
     }
 
+    @Test
+    void move_normalLinear() throws Exception {
+        EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Linear.egc");
+        Board board = new Board(egb.getGameInitializer());
+
+        Score score = new Score(Player.PLAYER1);
+
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)), score);
+    }
+
 
 
 

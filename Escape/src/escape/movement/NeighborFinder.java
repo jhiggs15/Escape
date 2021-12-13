@@ -37,6 +37,7 @@ public class NeighborFinder
             case ORTHOGONAL:
             case DIAGONAL:
             case LINEAR:
+                neighborSearch = LINEARNeighborfinder;
             case SKEW:
         }
     }
@@ -60,6 +61,9 @@ public class NeighborFinder
     }
 
     public static NeighborSearch OMNINeighborfinder = (EscapeCoordinate coordinate)
+            -> allNeighborFinder.findAllNeighbors(coordinate);
+
+    public static NeighborSearch LINEARNeighborfinder = (EscapeCoordinate coordinate)
             -> allNeighborFinder.findAllNeighbors(coordinate);
 
 

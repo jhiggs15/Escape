@@ -54,7 +54,7 @@ move
 + unblock piece cannot land on a block
 + fly piece can move past block
 + fly piece cannot land on a block
-
++ basic linear test
 
 
 
