@@ -1,6 +1,7 @@
 package escape.board;
 
 import escape.EscapeGameBuilder;
+import escape.gamemanagement.RuleManager;
 import escape.gamemanagement.Score;
 import escape.exception.*;
 import escape.piece.EscapeGamePiece;
@@ -9,6 +10,7 @@ import escape.required.LocationType;
 import escape.required.Player;
 import escape.util.PieceAttribute;
 import escape.util.PieceTypeDescriptor;
+import escape.util.RuleDescriptor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -121,6 +123,15 @@ public class BoardTest
 
         pieces.add(makePiece(
                 Player.PLAYER1,
+                EscapePiece.PieceName.SNAIL,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 1)}
+        ));
+
+        pieces.add(makePiece(
+                Player.PLAYER2,
                 EscapePiece.PieceName.SNAIL,
                 EscapePiece.MovementPattern.OMNI,
                 new PieceAttribute[]{
@@ -340,22 +351,27 @@ public class BoardTest
     @Test
     void move_noPathCouldBeFound() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPath.egc");
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
         Board board = new Board(egb.getGameInitializer());
-        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-4, 0)));
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-4, 0), ruleManager));
     }
 
     @Test
     void move_PathIsLargerThanThePiecesValue() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPath.egc");
         Board board = new Board(egb.getGameInitializer());
-        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1)));
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
+
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1), ruleManager));
     }
 
     @Test
     void move_NormalMove() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/TheBox.egc");
         Board board = new Board(egb.getGameInitializer());
-        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, -3)), new Score(Player.PLAYER1));
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
+
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, -3), ruleManager), new Score(Player.PLAYER1));
         EscapeGamePiece dog = makePiece(
                 Player.PLAYER1,
                 EscapePiece.PieceName.DOG,
@@ -384,7 +400,8 @@ public class BoardTest
 
         Score score = new Score(Player.PLAYER2);
         score.incrementPlayerScore(horse);
-        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)), score);
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
+        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12), ruleManager), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(5, 12)));
         assertNull(board.getPieceAt(new EscapeCoordinate(10, 12)));
     }
@@ -407,7 +424,9 @@ public class BoardTest
         Score score = new Score(Player.PLAYER2);
         score.incrementPlayerScore(dog);
 
-        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-1, 1)), score);
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
+
+        assertEquals(board.move(Player.PLAYER2, new EscapeCoordinate(-2, -1), new EscapeCoordinate(-1, 1), ruleManager), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(-2, -1)));
         assertNull(board.getPieceAt(new EscapeCoordinate(-1, 1)));
     }
@@ -431,8 +450,9 @@ public class BoardTest
         );
 
         Score score = new Score(Player.PLAYER1);
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
 
-        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(4, 1)), score);
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(4, 1), ruleManager), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(2, 2)));
         assertEquals(board.getPieceAt(new EscapeCoordinate(4, 1)), frog);
 
@@ -442,8 +462,9 @@ public class BoardTest
     void move_unblockPieceCannotLandOnBlock() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
         Board board = new Board(egb.getGameInitializer());
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
 
-        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 2)));
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 2),ruleManager ));
     }
 
     @Test
@@ -462,8 +483,9 @@ public class BoardTest
         );
 
         Score score = new Score(Player.PLAYER1);
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
 
-        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-2, 2)), score);
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-2, 2), ruleManager), score);
         assertNull(board.getPieceAt(new EscapeCoordinate(0, 2)));
         assertEquals(board.getPieceAt(new EscapeCoordinate(-2, 2)), frog);
 
@@ -473,28 +495,29 @@ public class BoardTest
     void move_FLYPieceCannotLandOnBlock() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Block.egc");
         Board board = new Board(egb.getGameInitializer());
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
 
-        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-1, 2)));
+        assertThrows(NoPathExists.class, () -> board.move(Player.PLAYER1, new EscapeCoordinate(0, 2), new EscapeCoordinate(-1, 2), ruleManager));
     }
 
     @Test
     void move_normalPiecesMoveAroundBlock() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/ForcedPathBlock.egc");
         Board board = new Board(egb.getGameInitializer());
-
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
         Score score = new Score(Player.PLAYER1);
 
-        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1)), score);
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(-2, -1), new EscapeCoordinate(1, -1), ruleManager), score);
     }
 
     @Test
     void move_normalLinear() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/Linear.egc");
         Board board = new Board(egb.getGameInitializer());
-
+        RuleManager ruleManager = new RuleManager(new RuleDescriptor[0]);
         Score score = new Score(Player.PLAYER1);
 
-        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)), score);
+        assertEquals(board.move(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2), ruleManager), score);
     }
 
 

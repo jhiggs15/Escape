@@ -24,7 +24,7 @@ public class AStarTest
     public NeighborFinder initializeNeighborFinder(Board board, EscapeGameInitializer egb, EscapePiece.MovementPattern movementPattern, Coordinate.CoordinateType coordinateType) throws Exception {
         int xMax = egb.getxMax();
         int yMax = egb.getyMax();
-        NeighborFinder neighborFinder =new NeighborFinder(coordinateType, board, new BoundsChecker(xMax, yMax) );
+        NeighborFinder neighborFinder = new NeighborFinder(coordinateType, board, new BoundsChecker(xMax, yMax), false );
         neighborFinder.changeMovementPattern(movementPattern);
 
         return neighborFinder;

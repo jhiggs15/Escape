@@ -21,9 +21,11 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
     {
         gameBoard = new Board(gameInitializer);
         scoreManager = new ScoreManager();
+        scoreManager.updatePiecesOnBoard(gameBoard.getPiecesOnTheBoard());
         turnManager = new TurnManager();
         observerManager = new ObserverManager();
         ruleManager = new RuleManager(gameInitializer.getRules(), scoreManager, turnManager, observerManager);
+
     }
 
     @Override
@@ -34,8 +36,9 @@ public class GameManager implements EscapeGameManager<EscapeCoordinate> {
             if(!ruleManager.gameIsOver())
             {
                 Player currentPlayer = turnManager.getCurrentPlayer();
-                Score score = gameBoard.move(currentPlayer, from, to);
+                Score score = gameBoard.move(currentPlayer, from, to, ruleManager);
                 scoreManager.addScore(score);
+                scoreManager.updatePiecesOnBoard(gameBoard.getPiecesOnTheBoard());
                 turnManager.endTurn();
                 if(!ruleManager.checkGame())
                     observerManager.notifyAll(currentPlayer.toString() + " move was successful");

@@ -47,7 +47,7 @@ public class AStar implements PathFinding
             EscapeCoordinate current = getNextCoordinate();
             if(current.equals(to)) break;
 
-            List<EscapeCoordinate> neighbors = neighborFinder.getNeighbors(current, piece);
+            List<EscapeCoordinate> neighbors = neighborFinder.getNeighbors(current, piece, to);
 
             for(EscapeCoordinate neighbor : neighbors)
             {

@@ -1,5 +1,9 @@
 package escape.gamemanagement;
 
+import escape.board.Board;
+import escape.board.EscapeCoordinate;
+import escape.exception.NoPathExists;
+import escape.piece.EscapeGamePiece;
 import escape.required.Player;
 import escape.required.Rule;
 import escape.util.RuleDescriptor;
@@ -18,8 +22,16 @@ public class RuleManager
         this.scoreManager = scoreManager;
         this.turnManager = turnManager;
         this.observerManager = observerManager;
-        for(RuleDescriptor rule : rules)
-            this.rules.put(rule.ruleId, rule);
+        if(rules != null)
+            for(RuleDescriptor rule : rules)
+                this.rules.put(rule.ruleId, rule);
+    }
+
+    public RuleManager(RuleDescriptor[] rules) {
+        this.scoreManager = new ScoreManager();
+        this.turnManager = new TurnManager();
+        this.observerManager = new ObserverManager();
+
     }
 
     public boolean gameIsOver()
@@ -32,7 +44,38 @@ public class RuleManager
         for(Rule.RuleID rule : rules.keySet())
             if(!gameIsOver)
                 checkRule(rule);
+        checkIfPlayersHavePieces();
         return gameIsOver;
+    }
+
+    private void checkIfPlayersHavePieces()
+    {
+        if(!gameIsOver)
+        {
+            if(!scoreManager.hasPlayersLeft(Player.PLAYER1))
+                markWinner(Player.PLAYER2);
+            else if(!scoreManager.hasPlayersLeft(Player.PLAYER2))
+                markWinner(Player.PLAYER1);
+        }
+
+    }
+
+    private boolean hasConflictRule()
+    {
+        Set<Rule.RuleID> ruleSet = rules.keySet();
+        return ruleSet.contains(Rule.RuleID.REMOVE);
+    }
+
+    public boolean enforceConflictRules(Board gameBoard, EscapeCoordinate to)
+    {
+        EscapeGamePiece pieceAtDest = gameBoard.getPieceAt(to);
+        if(pieceAtDest.getPlayer() != turnManager.getCurrentPlayer() && hasConflictRule())
+        {
+            gameBoard.removePieceAt(to);
+            return true;
+        }
+        else
+            return false;
     }
 
     private void checkRule(Rule.RuleID rule)
@@ -57,6 +100,9 @@ public class RuleManager
     private void checkScore()
     {
         int maxScore = rules.get(Rule.RuleID.SCORE).ruleValue;
+//        if(scoreManager.getTotalPossibleScore(Player.PLAYER1) < maxScore
+//                && scoreManager.getTotalPossibleScore(Player.PLAYER2) < maxScore && rules.keySet().size() == 1)
+//            markTie();
         if(scoreManager.getPlayerScore(Player.PLAYER1) >= maxScore)
             markWinner(Player.PLAYER1);
         else if (scoreManager.getPlayerScore(Player.PLAYER2) >= maxScore)

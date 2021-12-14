@@ -54,7 +54,7 @@ public class Line implements PathFinding
 
         EscapeCoordinate nextCoordinate = new EscapeCoordinate(current.getX() + xDiff, current.getY() + yDiff);
 
-        if(neighborFinder.getNeighbors(current, piece).contains(nextCoordinate))
+        if(neighborFinder.getNeighbors(current, piece, destination).contains(nextCoordinate))
         {
             path.add(nextCoordinate);
             return findPath(path, nextCoordinate, destination, piece, xDiff, yDiff);

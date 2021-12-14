@@ -49,6 +49,11 @@ public class EscapeGamePiece implements EscapePiece
         return new EscapeGamePiece(owner, descriptor);
     }
 
+    @Override
+    public PieceName getName() {
+        return descriptor.getPieceName();
+    }
+
     public Player getPlayer()
     {
         return owner;

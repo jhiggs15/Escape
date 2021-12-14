@@ -10,6 +10,7 @@ import escape.required.Coordinate;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;
+import escape.util.RuleDescriptor;
 
 import java.util.List;
 
@@ -23,11 +24,11 @@ public class MoveManager
     private PathFindingFactory pathFindingFactory;
 
 
-    public MoveManager(Coordinate.CoordinateType coordinateType, Board board, int xMax, int yMax)
+    public MoveManager(Coordinate.CoordinateType coordinateType, Board board, int xMax, int yMax, boolean hasConflictRule)
     {
         this.boundsChecker = new BoundsChecker(xMax, yMax);
         this.board = board;
-        this.neighborFinder = new NeighborFinder(coordinateType, board, boundsChecker);
+        this.neighborFinder = new NeighborFinder(coordinateType, board, boundsChecker, hasConflictRule);
         this.pathFindingFactory = new PathFindingFactory(neighborFinder);
     }
 

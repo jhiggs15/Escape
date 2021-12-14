@@ -238,6 +238,7 @@ public class GameMangerTest
 
         assertTrue(gm.move(new EscapeCoordinate(10, 12), new EscapeCoordinate(5, 12)));
 
+
         assertEquals(observer.getMessage(), Player.PLAYER2 + " move was successful");
         assertNull(observer.getError());
 
@@ -455,6 +456,100 @@ public class GameMangerTest
 
     }
 
+    @Test
+    void move_pieceIsNotRemovedCorrectly() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/NoRemove.egc", observer);
+
+        assertTrue(gm.move(new EscapeCoordinate(6, 6), new EscapeCoordinate(7, 5)));
+        assertFalse(gm.move(new EscapeCoordinate(5, 5), new EscapeCoordinate(7, 5)));
+
+    }
+
+    @Test
+    void move_pieceIsRemovedCorrectly() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/Remove.egc", observer);
+
+        assertTrue(gm.move(new EscapeCoordinate(6, 6), new EscapeCoordinate(7, 5)));
+        assertTrue(gm.move(new EscapeCoordinate(5, 5), new EscapeCoordinate(7, 5)));
+
+        EscapeGamePiece dog = makePiece(
+                Player.PLAYER2,
+                EscapePiece.PieceName.DOG,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 5)}
+        );
+
+        assertEquals(gm.getPieceAt(new EscapeCoordinate(7, 5)), dog);
+        assertNull(gm.getPieceAt(new EscapeCoordinate(5, 5)));
+
+    }
+
+    @Test
+    void move_samePlayerPieceIsNotRemoved() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/Remove.egc", observer);
+
+        assertFalse(gm.move(new EscapeCoordinate(4, 4), new EscapeCoordinate(6, 6)));
+
+        EscapeGamePiece dog = makePiece(
+                Player.PLAYER1,
+                EscapePiece.PieceName.DOG,
+                EscapePiece.MovementPattern.OMNI,
+                new PieceAttribute[]{
+                        new PieceAttribute(
+                                EscapePiece.PieceAttributeID.DISTANCE, 5)}
+        );
+
+        assertEquals(gm.getPieceAt(new EscapeCoordinate(6, 6)), dog);
+        assertEquals(gm.getPieceAt(new EscapeCoordinate(4, 4)), dog);
+
+    }
+
+    @Test
+    void move_Player2RunsOutOfPieces() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/Remove.egc", observer);
+
+        assertTrue(gm.move(new EscapeCoordinate(4, 4), new EscapeCoordinate(5, 5)));
+
+        assertEquals(observer.getMessage(), "Player 1 wins");
+
+    }
+
+    @Test
+    void move_Player1RunsOutOfPieces() throws Exception
+    {
+        EscapeGameObsever observer = new EscapeGameObsever();
+
+        EscapeGameManager<EscapeCoordinate> gm = makeGameManager("Escape/config/egc/Remove.egc", observer);
+
+        assertTrue(gm.move(new EscapeCoordinate(6, 6), new EscapeCoordinate(5, 10)));
+        assertTrue(gm.move(new EscapeCoordinate(5, 5), new EscapeCoordinate(4, 4)));
+
+        assertTrue(gm.move(new EscapeCoordinate(5, 10), new EscapeCoordinate(5, 12)));
+
+        GameManager mygm = (GameManager) gm;
+
+        assertEquals(mygm.getPlayerScore(Player.PLAYER1), 2);
+
+        assertEquals(observer.getMessage(), "Player 2 wins");
+
+    }
+
+
+
 
     // ---- observer tests
 
@@ -510,6 +605,8 @@ public class GameMangerTest
         assertEquals(observer.getMessage(), Player.PLAYER1 + " move was successful");
         assertNull(observer.getError());
     }
+
+
 
 
 

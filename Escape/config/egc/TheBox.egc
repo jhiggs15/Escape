@@ -20,6 +20,5 @@ Piece descriptors :
 	FROG omni [distance 3, unblock]
 
 Rules :
-	REMOVE
 	SCORE 10
 	TURN_LIMIT 20

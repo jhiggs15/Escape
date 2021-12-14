@@ -27,6 +27,14 @@ move
 + score limit and turn limit are in effect, score limit is reached first
 + score limit and turn limit are in effect, turn limit is reached first
 + both are reached and turn limit are in effect, score limit is reached first
++ error is thrown if player tries to move to space with opposing players piece
+    when there is no remove rule
++ opposing players piece is removed if remove rule
++ same players piece is not removed if remove rule
++ if player runs out of pieces the opposing player wins
+    + Player 1 runs out
+    + Player 2 runs out
+-
 
 
 observer

@@ -34,7 +34,7 @@ public class NoPathExists extends EscapeException
 
     public static String createString(EscapeCoordinate from, EscapeCoordinate to, boolean isBlocked)
     {
-        return "No path could be found between " + from.toString() + " and " + to.toString() + " because the destination is blocked.";
+        return "No path could be found between " + from.toString() + " and " + to.toString() + " because the destination is blocked by a piece or block space.";
     }
 }
 

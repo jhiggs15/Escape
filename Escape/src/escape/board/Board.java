@@ -1,5 +1,6 @@
 package escape.board;
 
+import escape.gamemanagement.RuleManager;
 import escape.gamemanagement.Score;
 import escape.exception.NoPathExists;
 import escape.movement.MoveManager;
@@ -7,11 +8,13 @@ import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;
+import escape.required.Rule;
 import escape.util.EscapeGameInitializer;
 import escape.util.LocationInitializer;
 import escape.util.PieceTypeDescriptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +29,9 @@ public class Board {
 
     public Board(EscapeGameInitializer gameInitializer)
     {
+        boolean hasConflictRule = gameInitializer.getRules() != null && Arrays.stream(gameInitializer.getRules()).anyMatch(rule -> rule.ruleId.equals(Rule.RuleID.REMOVE) );
         this.moveManager = new MoveManager(gameInitializer.getCoordinateType(), this,
-                gameInitializer.getxMax(), gameInitializer.getyMax());
+                gameInitializer.getxMax(), gameInitializer.getyMax(), hasConflictRule);
 
         HashMap<EscapePiece.PieceName, EscapeGamePiece> piecesWithoutOwner = new HashMap();
         for(PieceTypeDescriptor pieceTypeDescriptor : gameInitializer.getPieceTypes())
@@ -54,7 +58,6 @@ public class Board {
     {
         if(spaceExists(coordinate))
             board.get(coordinate).addPiece(piece);
-
         else
         {
             BoardSpace boardSpace = new BoardSpace(piece, locationType);
@@ -97,7 +100,12 @@ public class Board {
         return piecesOnTheBoard;
     }
 
-    public Score move(Player player, EscapeCoordinate from, EscapeCoordinate to)
+    public boolean canMove(Player player, EscapeCoordinate from, EscapeCoordinate to)
+    {
+        return moveManager.canMove(player, from, to);
+    }
+
+    public Score move(Player player, EscapeCoordinate from, EscapeCoordinate to, RuleManager ruleManager)
     {
         if(canMove(player, from, to))
         {
@@ -111,7 +119,7 @@ public class Board {
             int pieceValue = targetedPiece.getMovementValue();
             if(pathSize > pieceValue) throw new NoPathExists(from, to, pathSize, pieceValue);
 
-            EscapeCoordinate destination = executeMove(from, path);
+            EscapeCoordinate destination = executeMove(from, path, ruleManager);
 
             Score score = findScore(player, destination);
             return score;
@@ -122,20 +130,30 @@ public class Board {
 
     }
 
-    private EscapeCoordinate executeMove(EscapeCoordinate from, List<EscapeCoordinate> path)
+    private EscapeCoordinate executeMove(EscapeCoordinate from, List<EscapeCoordinate> path, RuleManager ruleManager)
     {
-        EscapeGamePiece pieceToMove = board.get(from).removePiece();
         EscapeCoordinate destination = path.get(path.size() - 1);
+
+        if(spaceExists(destination) && !board.get(destination).spaceIsEmpty())
+            if(!ruleManager.enforceConflictRules(this, destination))
+                throw new NoPathExists(from, destination, true);
+
+        EscapeGamePiece pieceToMove = board.get(from).removePiece();
+
         List<EscapeCoordinate> possibleNewDestination =
                 path.stream()
                         .filter(coordinate -> exitSpaces.containsKey(coordinate))
                         .collect(Collectors.toList());
         if(possibleNewDestination.size() >= 1)
             destination = possibleNewDestination.get(0);
+
+
+
         createBoardSpace(destination, LocationType.CLEAR, pieceToMove);
 
         return destination;
     }
+
 
     private Score findScore(Player player, EscapeCoordinate to)
     {
@@ -143,19 +161,19 @@ public class Board {
 
         if(exitSpaces.containsKey(to))
         {
-            EscapeGamePiece removedPiece = board.get(to).removePiece();
+            EscapeGamePiece removedPiece = removePieceAt(to);;
             score.incrementPlayerScore(removedPiece);
-            piecesOnTheBoard.remove(removedPiece);
         }
 
         return score;
     }
 
-    public boolean canMove(Player player, EscapeCoordinate from, EscapeCoordinate to)
+    public EscapeGamePiece removePieceAt(EscapeCoordinate coordinate)
     {
-        return moveManager.canMove(player, from, to);
+        EscapeGamePiece removedPiece = board.get(coordinate).removePiece();
+        piecesOnTheBoard.remove(removedPiece);
+        return removedPiece;
     }
-
 
     public EscapeCoordinate makeCoordinate(int x, int y)
     {

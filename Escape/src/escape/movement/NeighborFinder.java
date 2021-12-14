@@ -9,6 +9,7 @@ import escape.required.EscapePiece;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,10 +21,12 @@ public class NeighborFinder
     private static AllNeighborFinder allNeighborFinder;
     private Board board;
     private BoundsChecker boundsChecker;
+    private boolean hasConflictRule;
 
 
-    public NeighborFinder(Coordinate.CoordinateType type, Board board, BoundsChecker boundsChecker)
+    public NeighborFinder(Coordinate.CoordinateType type, Board board, BoundsChecker boundsChecker, boolean hasConflictRule)
     {
+        this.hasConflictRule = hasConflictRule;
         this.board = board;
         this.boundsChecker = boundsChecker;
         allNeighborFinder = new AllNeighborFinder(type);
@@ -34,6 +37,7 @@ public class NeighborFinder
         switch (movementPattern){
             case OMNI:
                 neighborSearch = OMNINeighborfinder;
+                break;
             case ORTHOGONAL:
             case DIAGONAL:
             case LINEAR:
@@ -58,7 +62,22 @@ public class NeighborFinder
         return neighborSearch.findNeighbors(coordinate)
                 .stream().filter(neighbor -> boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor, piece))
                 .collect(Collectors.toList());
+
     }
+
+    public List<EscapeCoordinate> getNeighbors(EscapeCoordinate coordinate, EscapeGamePiece piece, EscapeCoordinate destination)
+    {
+        if(hasConflictRule)
+            return neighborSearch.findNeighbors(coordinate)
+                    .stream().filter(neighbor -> (boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor, piece)) || neighbor.equals(destination)  )
+                    .collect(Collectors.toList());
+        else
+            return neighborSearch.findNeighbors(coordinate)
+                    .stream().filter(neighbor -> (boundsChecker.isInBounds(neighbor) && board.isAccessible(neighbor, piece)))
+                    .collect(Collectors.toList());
+
+    }
+
 
     public static NeighborSearch OMNINeighborfinder = (EscapeCoordinate coordinate)
             -> allNeighborFinder.findAllNeighbors(coordinate);
