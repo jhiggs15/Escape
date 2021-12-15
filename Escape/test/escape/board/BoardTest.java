@@ -4,7 +4,6 @@ import escape.EscapeGameBuilder;
 import escape.gamemanagement.RuleManager;
 import escape.gamemanagement.Score;
 import escape.exception.*;
-import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;
@@ -306,8 +305,8 @@ public class BoardTest
     void canMove_outOfBoundsCanMove() throws Exception {
         EscapeGameBuilder egb = new EscapeGameBuilder("Escape/config/egc/NoNeighbors.egc");
         Board board = new Board(egb.getGameInitializer());
-        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
-        assertThrows(OutOfBoundsException.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
+        assertThrows(OutOfBounds.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(2, 2), new EscapeCoordinate(1, 1)));
+        assertThrows(OutOfBounds.class, () -> board.canMove(Player.PLAYER1, new EscapeCoordinate(1, 1), new EscapeCoordinate(2, 2)));
     }
 
     @Test

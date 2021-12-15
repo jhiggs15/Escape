@@ -6,12 +6,10 @@ import escape.required.EscapePiece;
 public class PathFindingFactory
 {
     private NeighborFinder neighborFinder;
-    private Line line;
 
     public PathFindingFactory(NeighborFinder neighborFinder)
     {
         this.neighborFinder = neighborFinder;
-        line = new Line(neighborFinder);
     }
 
     public PathFinding makePathFinder(EscapePiece.MovementPattern movementPattern)
@@ -40,6 +38,7 @@ public class PathFindingFactory
 
     private PathFinding makeLINEPathFinding(EscapePiece.MovementPattern movementPattern)
     {
+        Line line = new Line(neighborFinder);
         line.changeType(movementPattern);
         return line;
     }

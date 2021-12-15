@@ -2,16 +2,12 @@ package escape.movement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class NeighborFinder
 {

@@ -29,9 +29,9 @@ public class AllNeighborFinder
         return allNeighborSearch.findAllNeighbors(coordinate);
     }
 
-    public static AllNeighborSearch SQUAREAllNeighbors = (EscapeCoordinate coordinate)
+    private static AllNeighborSearch SQUAREAllNeighbors = (EscapeCoordinate coordinate)
             -> eightNeighbors(coordinate);
-    public static AllNeighborSearch HEXAllNeighbors = (EscapeCoordinate coordinate)
+    private static AllNeighborSearch HEXAllNeighbors = (EscapeCoordinate coordinate)
             -> sixNeighbors(coordinate);
 
 

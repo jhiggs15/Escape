@@ -2,7 +2,7 @@ package escape.movement.pathfinding;
 
 import escape.board.EscapeCoordinate;
 import escape.movement.NeighborFinder;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.EscapePiece;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 // !! Adapted from https://duck.cs.wpi.edu/user/jhiggins/notebooks/cs4233-notebooks.git/Coding/SimpleExample/FirstExample-v3.ipynb
 public class Line implements PathFinding
 {
-    LineChecker lineChecker;
+    private LineChecker lineChecker;
     private NeighborFinder neighborFinder;
 
     public Line(NeighborFinder neighborFinder)
@@ -64,7 +64,7 @@ public class Line implements PathFinding
     }
 
     // !! Adapted from https://duck.cs.wpi.edu/user/jhiggins/notebooks/cs4233-notebooks.git/Coding/SimpleExample/FirstExample-v3.ipynb
-    public static LineChecker DIAGONAL = (EscapeCoordinate from, EscapeCoordinate to) ->
+    private static LineChecker DIAGONAL = (EscapeCoordinate from, EscapeCoordinate to) ->
     {
         int rowDiffernce = Math.abs(from.getX() - to.getX());
         int columnDiffernce = Math.abs(from.getY() - to.getY());
@@ -72,12 +72,12 @@ public class Line implements PathFinding
     };
 
     // !! Adapted from https://duck.cs.wpi.edu/user/jhiggins/notebooks/cs4233-notebooks.git/Coding/SimpleExample/FirstExample-v3.ipynb
-    public static LineChecker ORTHOGONAL = (EscapeCoordinate from, EscapeCoordinate to) ->
+    private static LineChecker ORTHOGONAL = (EscapeCoordinate from, EscapeCoordinate to) ->
             from.getX() == to.getX() || from.getY() == to.getY();
 
 
     // !! Adapted from https://duck.cs.wpi.edu/user/jhiggins/notebooks/cs4233-notebooks.git/Coding/SimpleExample/FirstExample-v3.ipynb
-    public static LineChecker LINEAR = (EscapeCoordinate from, EscapeCoordinate to) ->
+    private static LineChecker LINEAR = (EscapeCoordinate from, EscapeCoordinate to) ->
             ORTHOGONAL.isSpecifiedLineType(from, to) || DIAGONAL.isSpecifiedLineType(from, to);
 
 }

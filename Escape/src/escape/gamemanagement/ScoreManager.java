@@ -1,6 +1,6 @@
 package escape.gamemanagement;
 
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Player;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class ScoreManager
         player2PiecesOnTheBoard = gamePieces.stream().filter(piece -> piece.getPlayer().equals(Player.PLAYER2)).collect(Collectors.toList());
     }
 
-    public boolean hasPlayersLeft(Player player)
+    public boolean hasPiecesLeft(Player player)
     {
         if(isPlayer1(player))
             return player1PiecesOnTheBoard.size() != 0;

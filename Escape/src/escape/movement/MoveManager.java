@@ -5,12 +5,11 @@ import escape.board.EscapeCoordinate;
 import escape.exception.*;
 import escape.movement.pathfinding.PathFinding;
 import escape.movement.pathfinding.PathFindingFactory;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;
-import escape.util.RuleDescriptor;
 
 import java.util.List;
 
@@ -44,8 +43,8 @@ public class MoveManager
         if(from.equals(to)) throw new PieceHasNotMoved(from);
 
         // ensure source or destination is in of bounds
-        if(!isInBounds(from)) throw new OutOfBoundsException(from);
-        if(!isInBounds(to)) throw new OutOfBoundsException(to);
+        if(!isInBounds(from)) throw new OutOfBounds(from);
+        if(!isInBounds(to)) throw new OutOfBounds(to);
 
         // ensure a piece exists at the given space
         EscapeGamePiece piece = board.getPieceAt(from);

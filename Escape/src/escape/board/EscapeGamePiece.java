@@ -1,9 +1,5 @@
-package escape.piece;
+package escape.board;
 
-import escape.board.Board;
-import escape.board.EscapeCoordinate;
-import escape.exception.EscapeException;
-import escape.movement.MoveManager;
 import escape.required.EscapePiece;
 import escape.required.Player;
 import escape.util.PieceTypeDescriptor;

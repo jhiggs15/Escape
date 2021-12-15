@@ -4,7 +4,6 @@ import escape.gamemanagement.RuleManager;
 import escape.gamemanagement.Score;
 import escape.exception.NoPathExists;
 import escape.movement.MoveManager;
-import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
 import escape.required.Player;

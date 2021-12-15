@@ -2,9 +2,9 @@ package escape.exception;
 
 import escape.board.EscapeCoordinate;
 
-public class OutOfBoundsException extends EscapeException
+public class OutOfBounds extends EscapeException
 {
-    public OutOfBoundsException(EscapeCoordinate coordinate) {
+    public OutOfBounds(EscapeCoordinate coordinate) {
         super(createString(coordinate));
     }
 

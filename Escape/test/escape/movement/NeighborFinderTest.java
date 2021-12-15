@@ -3,18 +3,17 @@ package escape.movement;
 import escape.EscapeGameBuilder;
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Coordinate;
 import escape.required.EscapePiece;
 import escape.required.Player;
 import escape.util.EscapeGameInitializer;
 import escape.util.PieceAttribute;
 import escape.util.PieceTypeDescriptor;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runners.Parameterized;
+
 import static junit.framework.TestCase.*;
 
 import java.util.ArrayList;

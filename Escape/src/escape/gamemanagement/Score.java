@@ -1,6 +1,6 @@
 package escape.gamemanagement;
 
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Player;
 
 import java.util.ArrayList;

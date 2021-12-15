@@ -5,16 +5,13 @@ import escape.exception.*;
 import escape.gamemanagement.EscapeGameManager;
 import escape.gamemanagement.EscapeGameObsever;
 import escape.gamemanagement.GameManager;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.GameObserver;
 import escape.required.Player;
 import escape.util.PieceAttribute;
 import escape.util.PieceTypeDescriptor;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,8 +42,8 @@ public class GameMangerTest
         assertFalse(gm.move(gm.makeCoordinate(2, 2), gm.makeCoordinate(1, 1)));
         GameManager myGm = (GameManager) gm;
 
-        assertEquals(observer.getMessage(), OutOfBoundsException.class.toString());
-        assertEquals(observer.getError(), OutOfBoundsException.createString(gm.makeCoordinate(2, 2)));
+        assertEquals(observer.getMessage(), OutOfBounds.class.toString());
+        assertEquals(observer.getError(), OutOfBounds.createString(gm.makeCoordinate(2, 2)));
 
         assertEquals(myGm.whoseTurn(), Player.PLAYER1);
         assertEquals(((GameManager) gm).getPlayerScore(Player.PLAYER1), 0);

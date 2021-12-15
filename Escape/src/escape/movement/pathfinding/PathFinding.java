@@ -1,7 +1,7 @@
 package escape.movement.pathfinding;
 
 import escape.board.EscapeCoordinate;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 
 import java.util.List;
 

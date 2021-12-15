@@ -2,8 +2,7 @@ package escape.gamemanagement;
 
 import escape.board.Board;
 import escape.board.EscapeCoordinate;
-import escape.exception.NoPathExists;
-import escape.piece.EscapeGamePiece;
+import escape.board.EscapeGamePiece;
 import escape.required.Player;
 import escape.required.Rule;
 import escape.util.RuleDescriptor;
@@ -52,9 +51,9 @@ public class RuleManager
     {
         if(!gameIsOver)
         {
-            if(!scoreManager.hasPlayersLeft(Player.PLAYER1))
+            if(!scoreManager.hasPiecesLeft(Player.PLAYER1))
                 markWinner(Player.PLAYER2);
-            else if(!scoreManager.hasPlayersLeft(Player.PLAYER2))
+            else if(!scoreManager.hasPiecesLeft(Player.PLAYER2))
                 markWinner(Player.PLAYER1);
         }
 

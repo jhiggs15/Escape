@@ -1,7 +1,6 @@
 package escape.movement;
 
 import escape.board.EscapeCoordinate;
-import escape.piece.EscapeGamePiece;
 
 import java.util.List;
 

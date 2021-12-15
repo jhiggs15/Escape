@@ -1,13 +1,10 @@
 package escape.board;
 
-import escape.piece.EscapeGamePiece;
 import escape.required.EscapePiece;
 import escape.required.LocationType;
-import escape.required.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class BoardSpace
 {
